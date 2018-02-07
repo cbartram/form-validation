@@ -11,7 +11,9 @@ module.exports = {
             MAX: {req: false, value: 0},
             NUMERIC: false,
             DATE: false,
-            BOOLEAN: false
+            BOOLEAN: false,
+            ALPHANUMERIC: false,
+            SIZE: {req: false, value: 0}
         };
     }
 };
