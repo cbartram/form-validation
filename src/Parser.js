@@ -1,4 +1,3 @@
-const chalk = require("chalk");
 const Rules = require("./Rules");
 
 /**
@@ -23,12 +22,23 @@ module.exports = {
             arr.forEach(element => {
                //If the element includes a value instead of a boolean
                if(element.includes(":")) {
+
                     //example: element:value -> max:50
                     let value = element.substr(element.indexOf(":") + 1, element.length);
                     element = element.substr(0, element.indexOf(":"));
 
-                    rules[element.toUpperCase()].req = true;
-                    rules[element.toUpperCase()].value = value;
+                    //Parse between differently
+                    if(element === "between") {
+                        let arr = value.split(",");
+
+                        rules[element.toUpperCase()].req = true;
+                        rules[element.toUpperCase()].min = arr[0];
+                        rules[element.toUpperCase()].max = arr[1];
+
+                    } else {
+                        rules[element.toUpperCase()].req = true;
+                        rules[element.toUpperCase()].value = value;
+                    }
 
                } else {
                    rules[element.toUpperCase()] = true;

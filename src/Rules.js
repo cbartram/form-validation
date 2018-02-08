@@ -13,7 +13,14 @@ module.exports = {
             DATE: false,
             BOOLEAN: false,
             ALPHANUMERIC: false,
-            SIZE: {req: false, value: 0}
+            SIZE: {req: false, value: 0},
+            AFTER: {req: false, value: 0},
+            AFTER_OR_EQUAL: {req: false, value: 0},
+            ALPHA: false,
+            BEFORE: {req: false, value: 0},
+            BEFORE_OR_EQUAL: {req: false, value: 0},
+            BETWEEN:{req: false, min: 0, max: 0}, //this one is unique and requires a special case to parse
+            CONFIRMED:false
         };
     }
 };

@@ -23,10 +23,15 @@ app.get('/', (req, res) => res.sendFile("/public/index.html", {root: __dirname})
 let opts = {
     name:'required|max:50|alphanumeric',
     birthday: 'max:150|required|date',
-    friends: 'array|required|alphanumeric|max:3',
+    friends: 'array|required|max:3',
+    hasFriends: 'required|boolean',
+    isMarried: 'required|array|size:1',
+    date: 'required|date|before:2018-03-25',
+    age: 'required|between:1,10',
+    password: 'confirmed',
 };
 
-app.post('/api/v1/form/submit', auth.validate(opts), (req, res) => {
+app.post('/api/v1/form/submit', auth.make(opts), (req, res) => {
     res.json({success: true, validRequest: req.valid, why: req.why});
 });
 
