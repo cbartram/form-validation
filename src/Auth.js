@@ -1,5 +1,7 @@
 /**
  * Created by christian bartram on 2/6/18.
+ *
+ * todo Short circuit validation option, multiple nested layers for json
  */
 const parser = require('./Parser');
 let validator = require('validator');
@@ -58,7 +60,7 @@ module.exports = {
                 //The key is not a date
                 if(rule.DATE && validator.toDate(body) === null) {
                     req.valid = false;
-                    req.why = `The key -> ${key} must be in a valid Javascript Date format`;
+                    req.why = `The key -> ${key} must be in a valid Javascript date format`;
                     next();
                 }
 
@@ -104,20 +106,20 @@ module.exports = {
 
                 if(rule.BEFORE.req && !moment(body).isBefore(rule.BEFORE.value)) {
                     req.valid = false;
-                    req.why = `They key -> ${key} with value ${body} was expected to be chronologically before ${rule.BEFORE.value}`;
+                    req.why = `The key -> ${key} with value ${body} was expected to be chronologically before ${rule.BEFORE.value}`;
                     next();
                 }
 
                 if(rule.BEFORE_OR_EQUAL.req && !moment(body).isSameOrBefore(rule.BEFORE_OR_EQUAL.value)) {
                     req.valid = false;
-                    req.why = `They key -> ${key} with value ${body} was expected to be chronologically identical or chronologically before ${rule.BEFORE_OR_EQUAL.value}`;
+                    req.why = `The key -> ${key} with value ${body} was expected to be chronologically identical or chronologically before ${rule.BEFORE_OR_EQUAL.value}`;
                     next();
                 }
 
                 //Ensure value is between min/max
-                if(rule.BETWEEN.req && !isBetween(body, rule.BETWEEN.min, rule.BETWEEN.max)) {
+                if(rule.BETWEEN.req && !isBetween(body, rule.BETWEEN.value[0], rule.BETWEEN.value[1])) {
                     req.valid = false;
-                    req.why =  `The key -> ${key} must be contained in the set [${rule.BETWEEN.min}, ${rule.BETWEEN.max}]`;
+                    req.why =  `The key -> ${key} must be contained in the set [${rule.BETWEEN.value[0]}, ${rule.BETWEEN.value[1]}]`;
                     next();
                 }
 
@@ -128,7 +130,57 @@ module.exports = {
                     next();
                 }
 
-                //TODO Date Equals!
+                if(rule.DATE_EQUALS.req && !moment(body).isSame(rule.DATE_EQUALS.value)) {
+                    req.valid = false;
+                    req.why = `The key -> ${key} with value ${body} was expected to be chronologically equal to ${rule.DATE_EQUALS.value}`;
+                    next();
+                }
+
+                //Formats a specific date todo doesnt work quite yet
+                if(rule.DATE_FORMAT.req && moment(body, rule.DATE_FORMAT.value).isValid()) {
+                    req.valid = false;
+                    req.why = `The key -> ${key} with value ${body} was expected to be a moment compatible date formatted -> ${rule.DATE_FORMAT.value}`;
+                    next();
+                }
+
+                //If this currently observed fields value (body) is different from a different field in the request
+                if(rule.DIFFERENT.req && body === req.body[rule.DIFFERENT.value]) {
+                    req.valid = false;
+                    req.why = `The key -> ${key} with value ${body} was expected to be a different value from  -> ${req.body[rule.DIFFERENT.value]}`;
+                    next();
+                }
+
+                if(rule.DIGITS.req && (!validator.isNumeric(body) || body.length !== parseInt(rule.DIGITS.value))) {
+                    req.valid = false;
+                    req.why = `The key -> ${key} with value ${body} was expected to be numeric and of the length -> ${rule.DIGITS.value}`;
+                    next();
+                }
+
+                if(rule.DISTINCT && (hasDuplicates(body) || !Array.isArray(body))) {
+                    req.valid = false;
+                    req.why = `The key -> ${key} must not contain any duplicates and must also be of type Array`;
+                    next();
+                }
+
+                if(rule.EMAIL && !validator.isEmail(body)) {
+                    req.valid = false;
+                    req.why = `The key -> ${key} must be a valid email address`;
+                    next();
+                }
+
+                if(rule.FILLED && isNullOrUndefined(body)) {
+                    req.valid = false;
+                    req.why = `The key -> ${key} must not be null, undefined, or blank`;
+                    next();
+                }
+
+                if(rule.INCLUDES.req && !body.some(r => rule.INCLUDES.value.includes(r))) {
+                    console.log(body);
+                    console.log(rule.INCLUDES.value);
+                    req.valid = false;
+                    req.why = `The key -> ${key} is missing one or more of the following value(s): ${rule.INCLUDES.value}`;
+                    next();
+                }
 
             }
 
@@ -156,4 +208,17 @@ const isBetween = (value, min, max) => {
 
     return !(value === max || value === min);
 
+};
+
+const isNullOrUndefined = (value) => {
+    return typeof value === 'undefined' || value === null || value.length === 0
+};
+
+/**
+ * Checks for duplicates in an Array
+ * @param array
+ * @returns {boolean}
+ */
+const hasDuplicates = (array) => {
+    return (new Set(array)).size !== array.length;
 };

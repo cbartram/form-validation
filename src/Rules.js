@@ -19,8 +19,16 @@ module.exports = {
             ALPHA: false,
             BEFORE: {req: false, value: 0},
             BEFORE_OR_EQUAL: {req: false, value: 0},
-            BETWEEN:{req: false, min: 0, max: 0}, //this one is unique and requires a special case to parse
-            CONFIRMED:false
+            BETWEEN:{req: false, value:[0, 0]}, //this one is unique and requires a special case to parse
+            CONFIRMED:false,
+            DATE_EQUALS: {req: false, value: 0},
+            DATE_FORMAT: {req: false, value: 0},
+            DIFFERENT: {req: false, value: 0},
+            DIGITS: {req: false, value: 0},
+            DISTINCT: false,
+            EMAIL: false,
+            FILLED: false,
+            INCLUDES:{req: false, value:[]}
         };
     }
 };

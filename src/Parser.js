@@ -28,12 +28,11 @@ module.exports = {
                     element = element.substr(0, element.indexOf(":"));
 
                     //Parse between differently
-                    if(element === "between") {
+                    if(element === "between" || element === "includes") {
                         let arr = value.split(",");
 
                         rules[element.toUpperCase()].req = true;
-                        rules[element.toUpperCase()].min = arr[0];
-                        rules[element.toUpperCase()].max = arr[1];
+                        rules[element.toUpperCase()].value = arr;
 
                     } else {
                         rules[element.toUpperCase()].req = true;
