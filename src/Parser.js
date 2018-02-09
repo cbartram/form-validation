@@ -1,4 +1,4 @@
-const Rules = require("./Rules");
+import Rules from './Rules'
 
 /**
  * Created By Christian Bartram
@@ -8,13 +8,13 @@ const Rules = require("./Rules");
  * @param data rules data coming from the HTTP request
  * @return Object
  */
-module.exports = {
-    parse(data) {
+export default class Parser {
+    static parse(data) {
         let obj = {};
 
         for(let key in data) {
-            //Use a new rules object for each key
-            let rules = Rules.rules();
+            //Use a new rules object for each key todo change this to just rules() and implement the parser for the new rules
+            let rules = Rules.rulesAsObject();
             let arr  = data[key].split("|");
 
             arr.forEach(element => {
@@ -25,7 +25,7 @@ module.exports = {
                     let value = element.substr(element.indexOf(":") + 1, element.length);
                     element = element.substr(0, element.indexOf(":"));
 
-                    //Parse between differently
+                    //Parse between, includes, and not_in differently
                     if(element === "between" || element === "includes" || element === "not_in") {
                         let arr = value.split(",");
 

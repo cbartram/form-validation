@@ -3,7 +3,7 @@
  *
  * todo Short circuit validation option, multiple nested layers for json
  */
-const parser = require('./Parser');
+import Parser from './Parser';
 let validator = require('validator');
 const chalk = require('chalk');
 const moment = require('moment');
@@ -11,15 +11,15 @@ const moment = require('moment');
 //Why the request was invalid
 let why = "";
 
-module.exports = {
-    make(data) {
+export default class Auth {
+    static make(data) {
         return function initialize(req, res, next) {
             //Add 2 variables to the request
             req.valid = false;
             req.why = why;
 
 
-            let rules = parser.parse(data);
+            let rules = Parser.parse(data);
 
             console.log("Body -> ", req.body);
             console.log("Rules -> ", rules);
@@ -241,6 +241,12 @@ module.exports = {
                 if(rule.STRING && !(typeof body !== "string")) {
                     req.valid = false;
                     req.why =  `${body} must be of type String`;
+                    next();
+                }
+
+                if(rule.CREDIT_CARD && !validator.isCreditCard(body)) {
+                    req.valid = false;
+                    req.why =  `${key} must be a valid credit card number`;
                     next();
                 }
 

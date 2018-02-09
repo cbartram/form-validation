@@ -3,7 +3,7 @@
  */
 const express = require('express');
 const bodyParser = require('body-parser');
-const auth = require('./Auth');
+import Auth from './Auth';
 const chalk = require('chalk');
 const app = express();
 
@@ -25,10 +25,11 @@ let opts = {
     ip: 'required|ipv4',
     family:'required|regex:^([a-z0-9]{5,})$',
     age:'min:5',
-    surname: "same:name"
+    surname: "same:name",
+    address:"required|max:5|alphanumeric"
 };
 
-app.post('/api/v1/form/submit', auth.make(opts), (req, res) => {
+app.post('/api/v1/form/submit', Auth.make(opts), (req, res) => {
     res.json({success: true, validRequest: req.valid, why: req.why});
 });
 
