@@ -175,10 +175,72 @@ module.exports = {
                 }
 
                 if(rule.INCLUDES.req && !body.some(r => rule.INCLUDES.value.includes(r))) {
-                    console.log(body);
-                    console.log(rule.INCLUDES.value);
                     req.valid = false;
                     req.why = `The key -> ${key} is missing one or more of the following value(s): ${rule.INCLUDES.value}`;
+                    next();
+                }
+
+                if(rule.IP && !validator.isIP(body)) {
+                    req.valid = false;
+                    req.why = `The key -> ${key} is must be a valid ipv4 or ipv6 address`;
+                    next();
+                }
+
+                if(rule.IPV4 && !validator.isIP(body, 4)) {
+                    req.valid = false;
+                    req.why = `The key -> ${key} is must be a valid ipv4 address`;
+                    next();
+                }
+
+                if(rule.IPV6 && !validator.isIP(body, 6)) {
+                    req.valid = false;
+                    req.why = `The key -> ${key} is must be a valid ipv6 address`;
+                    next();
+                }
+
+                //todo Doesnt work or im giving it the wrong input idk
+                if(rule.JSON && !validator.isJSON(body)) {
+                    req.valid = false;
+                    req.why = `The key -> ${key} is must be a valid JSON`;
+                    next();
+                }
+
+                //todo what if body is an array need more logic here
+                //Ensure the data does not exceed a min length
+                if(rule.MIN.req && body < rule.MIN.value) {
+                    req.valid = false;
+                    req.why =  `The key exceeds the minimum length. Key length: ${body}  Minimum length: ${rule.MIN.value}`;
+                    next();
+                }
+
+                if(rule.NOT_IN.req && body.some(r => rule.INCLUDES.value.includes(r))) {
+                    req.valid = false;
+                    req.why =  `The key ${key} contains one or more of the following values ${rule.NOT_IN.value}`;
+                    next();
+                }
+
+                //In docs note that the rule must be without / because it is created from the RegExp Constructor
+                if(rule.REGEX.req && !new RegExp(rule.REGEX.value).test(body)) {
+                    req.valid = false;
+                    req.why =  `The key ${key} with value: ${body} does not match the given regular expression.`;
+                    next();
+                }
+
+                if(rule.SAME.req && !(req.body[rule.SAME.value] === body)) {
+                    req.valid = false;
+                    req.why =  `${body} must match the value for the field: ${rule.SAME.value}`;
+                    next();
+                }
+
+                if(rule.INTEGER && !validator.isInt(body)) {
+                    req.valid = false;
+                    req.why =  `${body} must be of type Integer`;
+                    next();
+                }
+
+                if(rule.STRING && !(typeof body !== "string")) {
+                    req.valid = false;
+                    req.why =  `${body} must be of type String`;
                     next();
                 }
 

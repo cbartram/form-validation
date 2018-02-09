@@ -22,11 +22,10 @@ app.get('/', (req, res) => res.sendFile("/public/index.html", {root: __dirname})
 
 let opts = {
     name:'required|max:50|alphanumeric',
-    birthday: 'required|date_format:MM/DD/YYYY',
-    surname: 'different:name',
-    phone: 'digits:10',
-    email: 'required|email',
-    friend: 'required|array|includes:tommy,fred,george'
+    ip: 'required|ipv4',
+    family:'required|regex:^([a-z0-9]{5,})$',
+    age:'min:5',
+    surname: "same:name"
 };
 
 app.post('/api/v1/form/submit', auth.make(opts), (req, res) => {

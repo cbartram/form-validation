@@ -12,8 +12,6 @@ module.exports = {
     parse(data) {
         let obj = {};
 
-        console.log(data);
-
         for(let key in data) {
             //Use a new rules object for each key
             let rules = Rules.rules();
@@ -28,7 +26,7 @@ module.exports = {
                     element = element.substr(0, element.indexOf(":"));
 
                     //Parse between differently
-                    if(element === "between" || element === "includes") {
+                    if(element === "between" || element === "includes" || element === "not_in") {
                         let arr = value.split(",");
 
                         rules[element.toUpperCase()].req = true;
