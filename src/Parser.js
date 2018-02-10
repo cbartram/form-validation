@@ -9,6 +9,45 @@ import Rules from './Rules'
  * @return Object
  */
 export default class Parser {
+
+    static objectParse(data) {
+        let obj = {};
+
+        for(let key in data) {
+            let rules = Rules.rules();
+            if(data.hasOwnProperty(key)) {
+                let arr = data[key].split("|");
+
+                arr.forEach(element => {
+                    //If the element includes a value instead of a boolean
+                    if(element.includes(":")) {
+
+                        //example: element:value -> max:50
+                        let value = element.substr(element.indexOf(":") + 1, element.length);
+                        element = element.substr(0, element.indexOf(":"));
+
+                        //Parse between, includes, and not_in differently
+                        if(element === "between" || element === "includes" || element === "not_in") {
+                            let arr = value.split(",");
+
+                            // rules[element.toUpperCase()].req = true;
+                            // rules[element.toUpperCase()].value = arr;
+
+                        } else {
+                            console.log(rules[element.toUpperCase()]);
+                            // rules[element.toUpperCase()].req = true;
+                            // rules[element.toUpperCase()].value = value;
+                        }
+
+                    } else {
+                        rules[element.toUpperCase()] = true;
+                    }
+                });
+            }
+        }
+    }
+
+
     static parse(data) {
         let obj = {};
 

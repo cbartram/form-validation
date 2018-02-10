@@ -18,6 +18,8 @@ export default class Auth {
             req.valid = false;
             req.why = why;
 
+            let r = Parser.objectParse(data);
+
 
             let rules = Parser.parse(data);
 
