@@ -2,12 +2,16 @@
  * Created by christianbartram on 2/8/18.
  */
 
-let name;
-
 export default class Rule {
 
-    constructor(name) {
+    constructor(name, why, type) {
         this.name = name;
+        this.why = why;
+        this.type = type;
+    }
+
+    getType() {
+        return this.type;
     }
 
     setName(name) {
@@ -18,11 +22,23 @@ export default class Rule {
         }
     }
 
+    setWhy(why) {
+        this.why = why;
+    }
+
+    getWhy() {
+        return this.why;
+    }
+
     getName() {
         return this.name;
     }
 
     getRule() {
+        throw new Error("This method requires implementation before use.")
+    }
+
+    getActivationFunction() {
         throw new Error("This method requires implementation before use.")
     }
 

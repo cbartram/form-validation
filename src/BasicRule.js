@@ -3,12 +3,13 @@
  */
 import Rule from './AbstractRule';
 
-let active;
 
 export default class BasicRule extends Rule {
-    constructor(name, active = false) {
-        super(name);
-        this.active = active;
+    constructor(name, req = false, why = "", activationFunction, type) {
+        super(name, why, type);
+        this.req = req;
+        this.why = why;
+        this.activationFunction = activationFunction;
     }
 
     setActive(active) {
@@ -19,19 +20,26 @@ export default class BasicRule extends Rule {
         }
     }
 
+    failed(field) {
+        return this.activationFunction(field) === false;
+    }
+
+    reason(field) {
+        return `${field} ${this.getWhy()}`;
+    }
+
     isActive() {
-        return active === true;
+        return this.req === true;
     }
 
-    getName() {
-        return super.getName();
+    getActivationFunction() {
+       return this.activationFunction;
     }
-
 
     getRule() {
         return {
-            name,
-            active
+            name: this.name,
+            req: this.req
         }
     }
 

@@ -10,11 +10,23 @@ import Rules from './Rules'
  */
 export default class Parser {
 
-    static objectParse(data) {
+    /**
+     * Parses string data for each field into usable javascript object
+     * @param data
+     * @param body
+     * @returns {{}}
+     */
+    static parse(data) {
         let obj = {};
 
         for(let key in data) {
+            //ex obj[name] = [Arr, to, hold, all, the, rules, objects]
+            obj[key] = [];
+
+
+            //Get rules definitions from rules class
             let rules = Rules.rules();
+
             if(data.hasOwnProperty(key)) {
                 let arr = data[key].split("|");
 
@@ -30,58 +42,32 @@ export default class Parser {
                         if(element === "between" || element === "includes" || element === "not_in") {
                             let arr = value.split(",");
 
-                            // rules[element.toUpperCase()].req = true;
-                            // rules[element.toUpperCase()].value = arr;
+                             rules[element.toUpperCase()].req = true;
+                             rules[element.toUpperCase()].value = arr;
+                             rules[element.toUpperCase()].why = "";
 
                         } else {
-                            console.log(rules[element.toUpperCase()]);
-                            // rules[element.toUpperCase()].req = true;
-                            // rules[element.toUpperCase()].value = value;
+                            rules[element.toUpperCase()].req = true;
+                            rules[element.toUpperCase()].value = value;
+                            rules[element.toUpperCase()].why = "";
                         }
 
                     } else {
-                        rules[element.toUpperCase()] = true;
+                        rules[element.toUpperCase()].req = true;
                     }
                 });
             }
-        }
-    }
 
+            //For each of the parsed rules
+            for(let parsed in rules) {
+                if(rules[parsed].req) {
+                    //Push the parsed rule onto the objects arr at the key position
+                    obj[key].push(rules[parsed])
+                }
+            }
+            //If the rule is required (true) add it to the returned object
+            //obj[key] = rules;
 
-    static parse(data) {
-        let obj = {};
-
-        for(let key in data) {
-            //Use a new rules object for each key todo change this to just rules() and implement the parser for the new rules
-            let rules = Rules.rulesAsObject();
-            let arr  = data[key].split("|");
-
-            arr.forEach(element => {
-               //If the element includes a value instead of a boolean
-               if(element.includes(":")) {
-
-                    //example: element:value -> max:50
-                    let value = element.substr(element.indexOf(":") + 1, element.length);
-                    element = element.substr(0, element.indexOf(":"));
-
-                    //Parse between, includes, and not_in differently
-                    if(element === "between" || element === "includes" || element === "not_in") {
-                        let arr = value.split(",");
-
-                        rules[element.toUpperCase()].req = true;
-                        rules[element.toUpperCase()].value = arr;
-
-                    } else {
-                        rules[element.toUpperCase()].req = true;
-                        rules[element.toUpperCase()].value = value;
-                    }
-
-               } else {
-                   rules[element.toUpperCase()] = true;
-               }
-            });
-
-            obj[key] = rules;
         }
 
         return obj;

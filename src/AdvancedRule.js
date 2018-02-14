@@ -3,19 +3,18 @@
  */
 import Rule from './AbstractRule';
 
-let name, req, value;
-
 export default class AdvancedRule extends Rule {
-    constructor(name, req = false, value = 0) {
-        super(name);
-
+    constructor(name, req = false, value = 0, why, activationFunction, type) {
+        super(name, why, type);
+        this.why = why;
+        this.activationFunction = activationFunction;
         this.name = name;
         this.req = req;
         this.value = value;
     }
 
     isRequired() {
-        return req === true;
+        return this.req === true;
     }
 
     setReq(req) {
@@ -24,6 +23,28 @@ export default class AdvancedRule extends Rule {
         } else {
             throw new Error("Req must be of type boolean")
         }
+    }
+
+    /**
+     * Formats the reason why the Http request failed
+     * @param field
+     * @param value
+     * @returns {string}
+     */
+    reason(field, value) {
+        return  `${field} ${this.why} ${value}`
+    }
+
+    failed(field, value) {
+        return this.activationFunction(field, value) === false;
+    }
+
+    failed(field, value, request) {
+        return this.activationFunction(field, value, request) === false;
+    }
+
+    getActivationFunction() {
+        return this.activationFunction;
     }
 
     getReq() {
@@ -44,9 +65,9 @@ export default class AdvancedRule extends Rule {
 
     getRule() {
         return {
-            name,
-            req,
-            value
+            name: this.name,
+            req: this.req,
+            value: this.value
         }
     }
 }

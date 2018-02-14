@@ -21,12 +21,8 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => res.sendFile("/public/index.html", {root: __dirname}));
 
 let opts = {
-    name:'required|max:50|alphanumeric',
-    ip: 'required|ipv4',
-    family:'required|regex:^([a-z0-9]{5,})$',
-    age:'min:5',
-    surname: "same:name",
-    address:"required|max:5|alphanumeric"
+    name:"required|alphanumeric|max:50",
+    address: "required|between:1,10"
 };
 
 app.post('/api/v1/form/submit', Auth.make(opts), (req, res) => {
