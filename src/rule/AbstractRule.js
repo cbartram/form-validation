@@ -4,14 +4,13 @@
 
 export default class Rule {
 
-    constructor(name, why, type) {
+    constructor(name, why) {
         this.name = name;
         this.why = why;
-        this.type = type;
     }
 
     getType() {
-        return this.type;
+        throw Error("This method requires implementation before use")
     }
 
     setName(name) {

@@ -1,4 +1,4 @@
-import Rules from './Rules'
+import Rules from '../rule/Rules'
 
 /**
  * Created By Christian Bartram

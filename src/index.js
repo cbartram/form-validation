@@ -3,7 +3,7 @@
  */
 const express = require('express');
 const bodyParser = require('body-parser');
-import Auth from './Auth';
+import Validator from './Validator';
 const chalk = require('chalk');
 const app = express();
 
@@ -25,7 +25,7 @@ let opts = {
     address: "required|between:1,10"
 };
 
-app.post('/api/v1/form/submit', Auth.make(opts), (req, res) => {
+app.post('/api/v1/form/submit', Validator.make(opts), (req, res) => {
     res.json({success: true, validRequest: req.valid, why: req.why});
 });
 

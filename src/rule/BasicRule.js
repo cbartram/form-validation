@@ -5,8 +5,8 @@ import Rule from './AbstractRule';
 
 
 export default class BasicRule extends Rule {
-    constructor(name, req = false, why = "", activationFunction, type) {
-        super(name, why, type);
+    constructor(name, req = false, why = "", activationFunction) {
+        super(name, why);
         this.req = req;
         this.why = why;
         this.activationFunction = activationFunction;
@@ -22,6 +22,10 @@ export default class BasicRule extends Rule {
 
     failed(field) {
         return this.activationFunction(field) === false;
+    }
+
+    getType() {
+        return "BASIC";
     }
 
     reason(field) {

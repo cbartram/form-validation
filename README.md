@@ -1,66 +1,81 @@
-# Form Validation
+# Validator
 
-One Paragraph of project description goes here
+Validator is a simple to use NodeJS/Express form validation middleware.
+It can be implemented with as little as one line of code and customized to fit any applications needs!
+
+Validator sits between the clients request and when the request gets processed by the route to validate
+incoming HTTP POST data.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+To get started using Validator simply install it as a dependency using `npm install --save form-validation`
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+Validator will be provided to your project using a simple import statement
 
-```
-Give examples
-```
+`const Validator = require("form-validation")` or if you are using ES6
+`import Validator from "form-validation"`
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
+If you would like to install Validator locally and run the project simply
+clone the project from [github](https://github.com/cbartram/form-validation)
 
-Say what the step will be
+Install any dependencies locally using `npm i`
 
+Finally start the local server using `npm start`
+
+The server will be available at `http://localhost:3000` and you can use
+any HTTP REST client to make post requests to the server. The entrypoint
+into the application is found under `/form-validation/src/index.js`
+
+### How to Use
+
+Since this Validator was designed as Express Middleware it sits right between
+the request being received by express and when it is processed in the routes callback function
+and is extremely easy to implement! Lets take a quick look at an example:
+
+```javascript
+const Validator = require("form-validation");
+
+const options = {
+    name: 'required'
+}
+
+app.post('/your_form/submit', Validator.make(options), (req, res) => {
+    //The req object will now be modified with 2 properties
+    //"success" and "why"
+    if(!req.success) {
+        res.send(req.why);
+    }
+});
 ```
-Give the example
-```
 
-And repeat
+In the example above we added middleware to the express route using
+`Validator.make(options)` where we passed a simple object which
 
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
+### Validation Rules
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+Unit tests can be run with the command `npm run test`
 
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+Deploy this software to NPM using `npm publish`
+
+
+## Under the Hood
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [NodeJS](http://www.nodejs.org) - Server Side Javascript
+* [Express](https://express.com) - HTTP Framework
+* [Javascript](https://mozilla.com) - Language Used
+* [NPM](http://npm.org) - Dependency Management
+* [Git](http://git.com) - Version Control
 
 ## Contributing
 
@@ -72,9 +87,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **Christian Bartram** - *Initial Work* - [cbartram](https://github.com/cbartram)
 
 ## License
 
@@ -82,6 +95,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
+* Erika Pickard - for listening to me and helping me ;)

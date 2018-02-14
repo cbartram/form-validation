@@ -4,8 +4,8 @@
 import Rule from './AbstractRule';
 
 export default class AdvancedRule extends Rule {
-    constructor(name, req = false, value = 0, why, activationFunction, type) {
-        super(name, why, type);
+    constructor(name, req = false, value = 0, why, activationFunction) {
+        super(name, why);
         this.why = why;
         this.activationFunction = activationFunction;
         this.name = name;
@@ -15,6 +15,10 @@ export default class AdvancedRule extends Rule {
 
     isRequired() {
         return this.req === true;
+    }
+
+    getType() {
+        return "ADVANCED"
     }
 
     setReq(req) {
