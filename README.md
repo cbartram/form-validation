@@ -53,9 +53,64 @@ app.post('/your_form/submit', Validator.make(options), (req, res) => {
 ```
 
 In the example above we added middleware to the express route using
-`Validator.make(options)` where we passed a simple object which
+`Validator.make(options)` where we passed a simple object which identifies
+the rules to enforce on each field.
+
+After the validation middleware finishes executing it will add two properties to the request object
+
+- success - Boolean True if the validation was successful false otherwise
+- why - String Blank if the validation was successful and an error message for why the validation failed
 
 ### Validation Rules
+
+Validation Rules are the core of this framework and can help validate almost
+any HTTP POST data quickly and easily.
+
+All rules inherit the parent class `AbstractRule` which provides two different (but important)
+types of rules.
+
+- `BasicRule` - A basic rule is any rule that can be validated with a boolean expression
+i.e Alphanumeric is a basic rule because it does not require more information other than the field value itself to validate
+- `AdvancedRule` - An advanced rules requires one or more pieces of additional data to validate the rule. i.e.
+Max is an advanced rule because it requires not only knowing to validate a value as being less than a maximum value but ALSO what that maximum value is.
+
+You can quickly combine combinations of Basic and Advanced rules to validate form data.
+Combinations can be chained together using the pipe `|` and properties for Advanced Rules are set using `:`
+
+Lets take a look at an example!
+```javascript
+//POST Body
+{
+    name: "Joe",
+    surname: "McGoo",
+    age: 23,
+    credit_card: 100990
+    exp: 2018-01-01
+}
+```
+
+```javascript
+const Validator = require("form-validation");
+
+
+var options = {
+    name: 'required|alphanumeric'
+    surname: 'alphanumeric'
+    age: 'required|numeric|between:1,100',
+    credit_card: 'required|same:age',
+    exp: 'required|date_after:2017-01-01
+};
+
+Validator.make(options);
+
+```
+
+The example above illustrates a basic POST Body and its respective validation options
+`required` `numeric` and `alphanumeric` are Basic Rules whereas `same`, `between` and `date_after` are all advanced rules.
+
+Hopefully this concept is becoming more clear with the previous example! Check out the Table below for a complete
+list of all the validation rules.
+
 
 ## Running the tests
 
@@ -65,9 +120,6 @@ Unit tests can be run with the command `npm run test`
 ## Deployment
 
 Deploy this software to NPM using `npm publish`
-
-
-## Under the Hood
 
 ## Built With
 
@@ -96,3 +148,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Acknowledgments
 
 * Erika Pickard - for listening to me and helping me ;)
+* Laravel - for inspiring an effective way to validate forms
