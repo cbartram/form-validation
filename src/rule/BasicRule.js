@@ -2,13 +2,13 @@
  * Created by christianbartram on 2/8/18.
  */
 import Rule from './AbstractRule';
+import ErrorCode from '../error/ErrorCode';
 
 
 export default class BasicRule extends Rule {
-    constructor(name, req = false, why = "", activationFunction) {
-        super(name, why);
+    constructor(name, req = false, activationFunction) {
+        super(name);
         this.req = req;
-        this.why = why;
         this.activationFunction = activationFunction;
     }
 
@@ -22,6 +22,15 @@ export default class BasicRule extends Rule {
 
     failed(field) {
         return this.activationFunction(field) === false;
+    }
+
+    /**
+     * Adds an additional reason why this
+     * rule failed to the stack
+     * @param name
+     */
+    addReason(name) {
+
     }
 
     getType() {

@@ -2,11 +2,11 @@
  * Created by christianbartram on 2/8/18.
  */
 import Rule from './AbstractRule';
+import ErrorCode from '../error/ErrorCode';
 
 export default class AdvancedRule extends Rule {
-    constructor(name, req = false, value = 0, why, activationFunction) {
-        super(name, why);
-        this.why = why;
+    constructor(name, req = false, value = 0, activationFunction) {
+        super(name);
         this.activationFunction = activationFunction;
         this.name = name;
         this.req = req;
@@ -30,13 +30,23 @@ export default class AdvancedRule extends Rule {
     }
 
     /**
+     * Adds an additional reason why this
+     * rule failed to the stack
+     * @param name
+     */
+    addReason(name) {
+
+    }
+
+    /**
      * Formats the reason why the Http request failed
      * @param field
      * @param value
      * @returns {string}
      */
     reason(field, value) {
-        return  `${field} ${this.why} ${value}`
+       // return  `${field} ${this.why} ${value}`
+        return null //todo
     }
 
     failed(field, value) {

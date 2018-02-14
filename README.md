@@ -56,10 +56,12 @@ In the example above we added middleware to the express route using
 `Validator.make(options)` where we passed a simple object which identifies
 the rules to enforce on each field.
 
-After the validation middleware finishes executing it will add two properties to the request object
+After the validation middleware finishes executing it will add two properties to the Express request object
 
 - success - Boolean True if the validation was successful false otherwise
 - why - String Blank if the validation was successful and an error message for why the validation failed
+
+The properties above can be accessed in the route's callback function using `req.success` and `req.why`
 
 ### Validation Rules
 

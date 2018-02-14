@@ -4,9 +4,9 @@
 
 export default class Rule {
 
-    constructor(name, why) {
+    constructor(name) {
         this.name = name;
-        this.why = why;
+        this.why = []; //Holds reason(s) why validation failed
     }
 
     getType() {
@@ -27,6 +27,10 @@ export default class Rule {
 
     getWhy() {
         return this.why;
+    }
+
+    addReason(name) {
+        throw new Error("This method requires implementation before use")
     }
 
     getName() {
