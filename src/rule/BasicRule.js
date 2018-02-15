@@ -2,14 +2,16 @@
  * Created by christianbartram on 2/8/18.
  */
 import Rule from './AbstractRule';
+import Rules from './Rules';
 import ErrorCode from '../error/ErrorCode';
 
 
 export default class BasicRule extends Rule {
-    constructor(name, req = false, activationFunction) {
+    constructor(name, req = false, activationFunction, shouldBail = false) {
         super(name);
         this.req = req;
         this.activationFunction = activationFunction;
+        this.shouldBail = shouldBail;
     }
 
     setActive(active) {
@@ -30,7 +32,9 @@ export default class BasicRule extends Rule {
      * @param name
      */
     addReason(name) {
-
+        let why = super.getWhy();
+        why.push(ErrorCode.codes()[name.toUpperCase()]);
+        super.setWhy(why);
     }
 
     getType() {
@@ -38,7 +42,7 @@ export default class BasicRule extends Rule {
     }
 
     reason(field) {
-        return `${field} ${this.getWhy()}`;
+        return `${field}${super.getWhy()}`;
     }
 
     isActive() {
@@ -54,6 +58,10 @@ export default class BasicRule extends Rule {
             name: this.name,
             req: this.req
         }
+    }
+
+    bail() {
+        return this.shouldBail;
     }
 
 }

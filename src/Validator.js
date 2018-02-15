@@ -4,6 +4,7 @@
  * todo Short circuit validation option, multiple nested layers for json
  */
 import Parser from './parser/Parser';
+import AbstractRule from "./rule/AbstractRule";
 
 export default class Validator {
     static make(data) {
@@ -28,6 +29,7 @@ export default class Validator {
                             case "SAME":
                             case "DIFFERENT":
                                 if(rule.failed(body, rule.getValue(), req)) {
+                                    rule.addReason(rule.getName());
                                     req.valid = false;
                                     req.why = rule.reason(body, rule.getValue());
                                     next();
@@ -35,6 +37,7 @@ export default class Validator {
                                 break;
                             default:
                                 if (rule.failed(body, rule.getValue())) {
+                                    rule.addReason(rule.getName());
                                     req.valid = false;
                                     req.why = rule.reason(body, rule.getValue());
                                     next();
@@ -44,6 +47,7 @@ export default class Validator {
                     } else {
                         //Basic Rule
                         if(rule.failed(body)) {
+                            rule.addReason(rule.getName());
                             req.valid = false;
                             req.why = rule.reason(key);
                             next();

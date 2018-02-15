@@ -26,11 +26,14 @@ export default class Parser {
 
             //Get rules definitions from rules class
             let rules = Rules.rules();
+            let shouldBail = false;
 
             if(data.hasOwnProperty(key)) {
                 let arr = data[key].split("|");
 
                 arr.forEach(element => {
+                    element.toUpperCase() === "BAIL" ? shouldBail = true : false;
+
                     //If the element includes a value instead of a boolean
                     if(element.includes(":")) {
 
@@ -38,22 +41,36 @@ export default class Parser {
                         let value = element.substr(element.indexOf(":") + 1, element.length);
                         element = element.substr(0, element.indexOf(":"));
 
+
                         //Parse between, includes, and not_in differently
                         if(element === "between" || element === "includes" || element === "not_in") {
                             let arr = value.split(",");
 
-                             rules[element.toUpperCase()].req = true;
-                             rules[element.toUpperCase()].value = arr;
-                             rules[element.toUpperCase()].why = "";
+                             if(element.toUpperCase() !== "BAIL") {
+                                 rules[element.toUpperCase()].req = true;
+                                 rules[element.toUpperCase()].value = arr;
+                                 rules[element.toUpperCase()].why = [];
+                                 rules[element.toUpperCase()].shouldBail = shouldBail;
+                             }
 
                         } else {
-                            rules[element.toUpperCase()].req = true;
-                            rules[element.toUpperCase()].value = value;
-                            rules[element.toUpperCase()].why = "";
+
+                            if(element.toUpperCase() !== "BAIL") {
+                                rules[element.toUpperCase()].req = true;
+                                rules[element.toUpperCase()].value = value;
+                                rules[element.toUpperCase()].why = [];
+                                rules[element.toUpperCase()].shouldBail = shouldBail
+                            }
                         }
 
                     } else {
-                        rules[element.toUpperCase()].req = true;
+
+                        if(element.toUpperCase() !== "BAIL") {
+                            rules[element.toUpperCase()].req = true;
+                            rules[element.toUpperCase()].why = [];
+                            rules[element.toUpperCase()].shouldBail = shouldBail;
+                        }
+
                     }
                 });
             }
@@ -65,9 +82,6 @@ export default class Parser {
                     obj[key].push(rules[parsed])
                 }
             }
-            //If the rule is required (true) add it to the returned object
-            //obj[key] = rules;
-
         }
 
         return obj;

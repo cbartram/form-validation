@@ -5,12 +5,13 @@ import Rule from './AbstractRule';
 import ErrorCode from '../error/ErrorCode';
 
 export default class AdvancedRule extends Rule {
-    constructor(name, req = false, value = 0, activationFunction) {
+    constructor(name, req = false, value = 0, activationFunction, shouldBail = false) {
         super(name);
         this.activationFunction = activationFunction;
         this.name = name;
         this.req = req;
         this.value = value;
+        this.shouldBail = shouldBail;
     }
 
     isRequired() {
@@ -35,7 +36,9 @@ export default class AdvancedRule extends Rule {
      * @param name
      */
     addReason(name) {
-
+        let why = super.getWhy();
+        why.push(ErrorCode.codes()[name.toUpperCase()]);
+        super.setWhy(why);
     }
 
     /**
@@ -45,8 +48,7 @@ export default class AdvancedRule extends Rule {
      * @returns {string}
      */
     reason(field, value) {
-       // return  `${field} ${this.why} ${value}`
-        return null //todo
+       return  `Key -> ${field}${super.getWhy()}${value}`;
     }
 
     failed(field, value) {
@@ -83,5 +85,9 @@ export default class AdvancedRule extends Rule {
             req: this.req,
             value: this.value
         }
+    }
+
+    bail() {
+        return this.shouldBail;
     }
 }

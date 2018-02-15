@@ -2,7 +2,7 @@
  * Created by christianbartram on 2/8/18.
  */
 
-export default class Rule {
+export default class AbstractRule {
 
     constructor(name) {
         this.name = name;
@@ -42,6 +42,10 @@ export default class Rule {
     }
 
     getActivationFunction() {
+        throw new Error("This method requires implementation before use.")
+    }
+
+    bail() {
         throw new Error("This method requires implementation before use.")
     }
 

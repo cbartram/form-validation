@@ -21,7 +21,7 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => res.sendFile("/public/index.html", {root: __dirname}));
 
 let opts = {
-    name:"required|alphanumeric|max:50",
+    name:"bail|required|alphanumeric|max:5",
     address: "required|between:1,10"
 };
 

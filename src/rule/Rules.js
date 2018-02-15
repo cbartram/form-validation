@@ -16,9 +16,13 @@ import moment from 'moment';
  */
 export default class Rules {
 
+    /**
+     * Creates instances of each rule uniquely with an anonymous inner function
+     * which returns true if the rule passes validation and false otherwise
+     * @return Object
+     */
     static rules() {
       return {
-          //Create each rule uniquely with an anonymous inner function
          ALPHANUMERIC: new BasicRule("ALPHANUMERIC", false, (field) => validator.isAlphanumeric(field + "", 'en-US')),
           //Must be ISO example: 2013-05-05 todo perhaps add more flexibility here e.g. after:tomorrow
          AFTER: new AdvancedRule("AFTER", false, 0, (field, value) => moment(field).isAfter(value)),
@@ -58,6 +62,11 @@ export default class Rules {
       }
     }
 
+    /**
+     * Returns a specific rule given its name
+     * @param name String rule name
+     * @returns {*} Object AbstractRule
+     */
     static getRule(name) {
         if(this.rules()[name] !== null && typeof this.rules()[name] !== 'undefined') {
             return this.rules()[name];
