@@ -1,18 +1,28 @@
 /**
- * Created by christianbartram on 2/8/18.
+ * AbstractRule
+ *
+ * This class provides the abstract implementation of a Rule
+ * that can be enforced
+ * @author Christian Bartram
  */
-
 export default class AbstractRule {
-
     constructor(name) {
         this.name = name;
         this.why = []; //Holds reason(s) why validation failed
     }
 
+    /**
+     * Returns the type of Rule that is being implemented
+     * @return String rule type
+     */
     getType() {
         throw Error("This method requires implementation before use")
     }
 
+    /**
+     * Sets the rules name. Names are automatically converted to Upper Case
+     * @param name String rule name
+     */
     setName(name) {
         if(name.length !== 0) {
             this.name = name.toUpperCase();
@@ -21,32 +31,98 @@ export default class AbstractRule {
         }
     }
 
+    /**
+     * Sets the Why array for reasons why the validation failed
+     * @param why
+     */
     setWhy(why) {
         this.why = why;
     }
 
+    /**
+     * Returns the Why array
+     * @returns {Array|*}
+     */
     getWhy() {
         return this.why;
     }
 
-    addReason(name) {
+    /**
+     * Overloaded method which adds a reason to the why array
+     * @param name String name
+     * @param field
+     */
+    addReason(name, field) {
         throw new Error("This method requires implementation before use")
     }
 
-    getName() {
-        return this.name;
+    /**
+     * Adds a reason to the why array
+     * @param name
+     * @param field
+     * @param value
+     */
+    addReason(name, field, value) {
+        throw new Error("This method requires implementation before use")
     }
 
+    /**
+     * Returns the name of the rule
+     * @returns {*}
+     */
+    getName() {
+        return this.name.toUpperCase();
+    }
+
+    /**
+     * Abstract method implemented returns an object representation of
+     * the rule
+     */
     getRule() {
         throw new Error("This method requires implementation before use.")
     }
 
+    /**
+     * Abstract method which returns the activation function for the rule
+     * @return function
+     */
     getActivationFunction() {
         throw new Error("This method requires implementation before use.")
     }
 
+    /**
+     * Abstract method which returns a boolean of wether to bail after a
+     * failed validation
+     */
     bail() {
         throw new Error("This method requires implementation before use.")
+    }
+
+    /**
+     * Returns true if the validation fails and false otherwise
+     * @param field
+     */
+    failed(field) {
+
+    }
+
+    /**
+     * Returns true if the validation fails and false otherwise
+     * @param field
+     * @param value
+     */
+    failed(field, value) {
+
+    }
+
+    /**
+     * Returns true if the validation fails and false otherwise
+     * @param field
+     * @param value
+     * @param req Express request object
+     */
+    failed(field, value, req) {
+
     }
 
 }

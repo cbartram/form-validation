@@ -22,34 +22,45 @@ export default class Validator {
                 let body = req.body[key]; //HTTP Request Body
                 let rules = parsedRules[key]; //Array of Rules to enforce
 
-                rules.forEach(rule => {
+                rules.forEach((rule, iterator) => {
                     //Check each rule against the value given in the HTTP Request body
                     if(rule.getType() === "ADVANCED") {
                         switch(rule.getName()) {
                             case "SAME":
                             case "DIFFERENT":
                                 if(rule.failed(body, rule.getValue(), req)) {
-                                    rule.addReason(rule.getName());
+                                    rule.addReason(rule.getName(), body, rule.getValue());
                                     req.valid = false;
-                                    req.why = rule.reason(body, rule.getValue());
+                                    req.why = rule.reason();
                                     next();
                                 }
                                 break;
                             default:
                                 if (rule.failed(body, rule.getValue())) {
-                                    rule.addReason(rule.getName());
-                                    req.valid = false;
-                                    req.why = rule.reason(body, rule.getValue());
-                                    next();
+                                    rule.addReason(rule.getName(), body);
+
+                                    //Bail after the first error
+                                    if(rule.bail()) {
+                                        req.valid = false;
+                                        req.why = rule.reason();
+                                        next();
+                                    } else {
+                                        //Continue until the last validation then bail
+                                        if(iterator === rules.length) {
+                                            req.valid = false;
+                                            req.why = rule.reason();
+                                            next();
+                                        }
+                                    }
                                 }
 
                         }
                     } else {
                         //Basic Rule
                         if(rule.failed(body)) {
-                            rule.addReason(rule.getName());
+                            rule.addReason(rule.getName(), body);
                             req.valid = false;
-                            req.why = rule.reason(key);
+                            req.why = rule.reason();
                             next();
                         }
                     }
