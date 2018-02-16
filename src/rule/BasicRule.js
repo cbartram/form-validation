@@ -49,6 +49,7 @@ export default class BasicRule extends AbstractRule {
      * Adds an additional reason why this
      * rule failed to the stack
      * @param name
+     * @param field
      */
     addReason(name, field) {
         let why = super.getWhy();

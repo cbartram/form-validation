@@ -21,8 +21,9 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => res.sendFile("/public/index.html", {root: __dirname}));
 
 let opts = {
-    name:"bail|required|alphanumeric|max:5",
-    address: "required|between:1,10"
+    name:"bail|required|alphanumeric|max:50",
+    address: "required|between:1,10",
+    birthday:"required|after:2017-01-01"
 };
 
 app.post('/api/v1/form/submit', Validator.make(opts), (req, res) => {
