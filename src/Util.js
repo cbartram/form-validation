@@ -7,6 +7,9 @@ export default class Util {
      * @returns {boolean}
      */
     static isBetween = (value, min, max) => {
+        min = parseInt(min);
+        max = parseInt(max);
+
         if(value > max) {
             return false
         }

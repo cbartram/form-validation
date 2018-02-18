@@ -26,8 +26,6 @@ export default class Validator {
                 let body = req.body[key]; //HTTP Request Body
                 let rules = parsedRules[key]; //Array of Rules to enforce
 
-                console.log(body);
-
                 rules.forEach((rule, iterator) => {
                     //Check each rule against the value given in the HTTP Request body
                     if(rule.getType() === "ADVANCED") {
@@ -44,8 +42,10 @@ export default class Validator {
                                 }
                                 break;
                             default:
+                                console.log(rule.getActivationFunction()(body, rule.getValue()));
                                 //Its just a normal advanced rule
                                 if (rule.failed(body, rule.getValue())) {
+                                    console.log("RULE ", rule.getName() + " FAILED");
                                     rule.addReason(rule.getName(), body, rule.getValue());
 
                                     //Bail after the first error

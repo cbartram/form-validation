@@ -23,13 +23,12 @@ export default class Rules {
      */
     static rules() {
       return {
-         ALPHANUMERIC: new BasicRule("ALPHANUMERIC", false, (field) => validator.isAlphanumeric(field + "", 'en-US')),
-          //Must be ISO example: 2013-05-05 todo perhaps add more flexibility here e.g. after:tomorrow
-         AFTER: new AdvancedRule("AFTER", false, 0, (field, value) => moment(field).isAfter(value)),
+         ALPHANUMERIC: new BasicRule("ALPHANUMERIC", false, (field) => validator.isAlphanumeric(field + "", 'en-US')),//√
+         AFTER: new AdvancedRule("AFTER", false, 0, (field, value) => moment(field, "YYYY-MM-DD").isAfter(value)),
          AFTER_OR_EQUAL: new AdvancedRule("AFTER_OR_EQUAL", false, 0,  (field, value) => moment(field).isSameOrAfter(value)),
-         ARRAY: new BasicRule("ARRAY", false,(field) => Array.isArray(field)),
-         ALPHA: new BasicRule("ALPHA", false, (field) => validator.isAlpha(field + "", 'en-US')),
-         BOOLEAN: new BasicRule("BOOLEAN", false, (field) => validator.isBoolean(field + "")),
+         ARRAY: new BasicRule("ARRAY", false,(field) => Array.isArray(field)), //√
+         ALPHA: new BasicRule("ALPHA", false, (field) => validator.isAlpha(field + "", 'en-US')), //√
+         BOOLEAN: new BasicRule("BOOLEAN", false, (field) => validator.isBoolean(field + "")), //√
          BEFORE: new AdvancedRule("BEFORE", false, 0, (field, value) => moment(field).isBefore(value)),
          BEFORE_OR_EQUAL: new AdvancedRule("BEFORE_OR_EQUAL", false, 0, (field, value) => moment(field).isSameOrBefore(value)),
          BETWEEN: new AdvancedRule("BETWEEN", false, [0, 0], (field, value) => Util.isBetween(field, value[0], value[1])),

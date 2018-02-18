@@ -27,15 +27,16 @@ Install any dependencies locally using `npm i`
 Finally start the local server using `npm start`
 
 The server will be available at `http://localhost:3000` and you can use
-any HTTP REST client to make post requests to the server. The entrypoint
+any HTTP REST client to make post requests to the server. The entry point
 into the application is found under `/form-validation/src/index.js`
 
-### How to Use
+### Using Form Validation
 
 Since this Validator was designed as Express Middleware it sits right between
-the request being received by express and when it is processed in the routes callback function
-and is extremely easy to implement! Lets take a quick look at an example:
+the request being received by express and when the request is processed in the routes callback function.
+It is extremely easy to implement form validation for your NodeJS Backend!
 
+Lets take a quick look at a basic express example:
 ```javascript
 const Validator = require("form-validation");
 
@@ -58,8 +59,8 @@ the rules to enforce on each field.
 
 After the validation middleware finishes executing it will add two properties to the Express request object
 
-- success - Boolean True if the validation was successful false otherwise
-- why - String Blank if the validation was successful and an error message for why the validation failed
+- **success** - Boolean True if the validation was successful false otherwise
+- **why** - Array Blank String if the validation was successful and an error message for why the validation failed
 
 The properties above can be accessed in the route's callback function using `req.success` and `req.why`
 
@@ -86,7 +87,7 @@ Lets take a look at an example!
     name: "Joe",
     surname: "McGoo",
     age: 23,
-    credit_card: 100990
+    credit_card: 10099088976
     exp: 2018-01-01
 }
 ```
@@ -99,7 +100,7 @@ var options = {
     name: 'required|alphanumeric'
     surname: 'alphanumeric'
     age: 'required|numeric|between:1,100',
-    credit_card: 'required|same:age',
+    credit_card: 'required|credit_card|same:age',
     exp: 'required|date_after:2017-01-01'
 };
 
@@ -107,8 +108,16 @@ Validator.make(options);
 
 ```
 
-The example above illustrates a basic POST Body and its respective validation options
-`required` `numeric` and `alphanumeric` are Basic Rules whereas `same`, `between` and `date_after` are all advanced rules.
+The example above illustrates a basic POST Body and its respective validation options.
+Notice how in the name field `required` is chained together with `alphanumeric` to enforce both rules upon the field.
+Advanced rule such as between use the `:` symbol to identify which values should be used as input into their activation function.
+For more information about how the rules are validated and processed see the **Under the Hood** section below!
+
+It is important to note that not all rules can be chained together for instance, `before` and `credit_card` cannot be chained
+together because there is no way the rule would ever be valid. A credit card number can never be a valid date. Use rule combinations at
+your discretion.
+
+For reference reasons: `required` `numeric` and `alphanumeric` are Basic Rules whereas `same`, `between` and `date_after` are all advanced rules.
 
 Hopefully this concept is becoming more clear with the previous example! Check out the Table below for a complete
 list of all the validation rules.
@@ -119,7 +128,7 @@ list of all the validation rules.
 | After           | Advanced Rule | Requires that the date comes chronologically after the value                                                                                                  | `{"birthday": "after:2017-01-01"}`                                                                        |
 | After or Equal  | Advanced Rule | Requires that the data comes chronologically after or equal to the value                                                                                      | `{"birthday": "after_or_equal:2017-01-01"}`                                                               |
 | Array           | Basic Rule    | Requires that the field being validated is of type Array                                                                                                      | `{"friends": "array"}`                                                                                    |
-| Alpha           | Basic Rule    | Requires that the field being validated is alpha characters only (a-z | A-Z)                                                                                  | `{"birthday": "alpha"}`                                                                                   |
+| Alpha           | Basic Rule    | Requires that the field being validated is alpha characters only (a-z, A-Z)                                                                                   | `{"birthday": "alpha"}`                                                                                   |
 | Boolean         | Basic Rule    | Requires the field to be of type boolean                                                                                                                      | `{"birthday": "boolean"}`                                                                                 |
 | Before          | Advanced Rule | Requires the date to come chronologically before the value                                                                                                    | `{"birthday": "before:2017-01-01"}`                                                                       |
 | Before or Equal | Advanced Rule | Requires the date to come chronologically before or equal to the value                                                                                        | `{"birthday": "before_or_equal:2017-01-01"}`                                                              |
@@ -150,6 +159,16 @@ list of all the validation rules.
 | Same            | Advanced Rule | The field under validation's value must match the value of the fields name given as an argument to this rule. See the example for more information            | `{ name: "required", surname: "same:name"} //The surname must be the same as name in the Request`         |
 | String          | Basic Rule    | The field under validation must be of type String                                                                                                             | `{name: "string"}`                                                                                        |
 
+## Under The Hood
+
+All rules go through a single validation process before they are deemed valid or invalid.
+each rule is parsed using the `|` and `:` symbols so that rules can be broken down into either
+`AdvancedRules` or `BasicRules`. An advanced rule contains a value property while a basic rule does not.
+The `required` rules is advanced because it does not require a value while the `max` rule is advanced because it requires a value
+i.e. `max:5`.
+
+Once the parsing process is complete the Rules are transformed into an array containing each `AbstractRule` object
+which can each be easily validated.
 
 ## Running the tests
 
