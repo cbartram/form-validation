@@ -5,7 +5,7 @@
   "main": "src/js/index.js",
   "scripts": {
     "build": "backpack build",
-    "test": "cd __tests__ && mocha --timeout 10000 --exit",
+    "test": "cd test && mocha --timeout 10000 --exit",
     "dev": "backpack",
     "compile": "./node_modules/.bin/babel --presets es2015,stage-0 -d lib/ src/"
   },
