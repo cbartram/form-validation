@@ -13,7 +13,40 @@ const Util = require("../lib/Util").default;
 const Parser = require("../lib/parser/Parser").default;
 
 describe('Parser Tests', () => {
-    it("")
+    let input = {
+        name:"max:50",
+        address: "between:1,10",
+        birthday:"after:1994-01-01",
+        friends: "between:1,10"
+    };
+
+    let parsedRules = Parser.parse(input);
+
+    it("Correctly parses object with correct properties", (done) => {
+
+        //Checks the outer properties
+        expect(parsedRules).is.a("object").and.has.own.property("name");
+        expect(parsedRules).has.own.property("address");
+        expect(parsedRules).has.own.property("birthday");
+        expect(parsedRules).has.own.property("friends");
+        done();
+    });
+
+    it("Correctly identifies each rule", (done) => {
+        expect(parsedRules.name).to.be.an("array");
+        expect(parsedRules.address).to.be.an("array");
+        expect(parsedRules.birthday).to.be.an("array");
+        expect(parsedRules.friends).to.be.an("array");
+        done();
+    });
+
+    it("Each rule is set properly", (done) => {
+        expect(parsedRules.name[0]).to.be.an("object").has.own.property("name").that.deep.equals("MAX");
+        expect(parsedRules.address[0]).to.be.an("object").has.own.property("name").that.deep.equals("BETWEEN");
+        expect(parsedRules.birthday[0]).to.be.an("object").has.own.property("name").that.deep.equals("AFTER");
+        expect(parsedRules.friends[0]).to.be.an("object").has.own.property("name").that.deep.equals("BETWEEN");
+        done();
+    });
 });
 
 describe('Rules Tests', () => {
@@ -880,19 +913,11 @@ describe("Rule Factory Tests", () => {
  * ==================
  */
 describe("Error Code Tests", () => {
-
     it("Ensures Error Codes are all valid Strings", (done) => {
         let keys = Object.keys(ErrorCode.codes());
         expect(ErrorCode.codes()).to.have.keys(keys);
         done();
     });
-
-    it("Ensures Error Codes have valid Values", (done) => {
-        let keys = Object.values(ErrorCode.codes());
-        expect(keys).to.be.an("array");
-        done();
-    });
-
 });
 
 /**

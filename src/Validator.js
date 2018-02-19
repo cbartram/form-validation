@@ -28,6 +28,9 @@ export default class Validator {
             req.why = "";
 
             let parsedRules = Parser.parse(data);
+
+            console.log(parsedRules);
+
             let failedRules = [];
 
             //Validate the data
