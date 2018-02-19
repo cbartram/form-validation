@@ -3,25 +3,13 @@
  */
 const express = require('express');
 const bodyParser = require('body-parser');
-const path = require('path');
+const Validator = require('./Validator').default;
 const chalk = require('chalk');
 const app = express();
 
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
-const myLogger = (req, res, next) => {
-    console.log('LOGGED');
-    next()
-};
-
-const requestTime = (req, res, next) => {
-    req.requestTime = Date.now();
-    next()
-};
-
-app.use(requestTime);
-app.use(myLogger);
 
 //Allow CORS
 app.use((req, res, next) => {
@@ -30,18 +18,26 @@ app.use((req, res, next) => {
     next();
 });
 
-
 //Serve HTML file
 app.get('/', (req, res) => res.sendFile("/public/index.html", {root: __dirname}));
 
+let opts = {
+    name:"max:50",
+    address: "between:1,10",
+    birthday:"after:1994-01-01",
+    friends: "between:1,10"
+};
 
-app.get('/api/v1/form/submit', (req, res) => {
-    res.json({success: true});
+app.post('/api/v1/form/submit', Validator.make(opts), (req, res) => {
+    res.json({success: true, validRequest: req.valid, why: req.why});
 });
 
 app.listen(3000, () => {
     console.log(chalk.blue('Running version 1.0.0'));
-    console.log(chalk.blue('----------------------------------'));
-    console.log(chalk.blue(`|  Server Listening on Port 3000 |`));
-    console.log(chalk.blue('----------------------------------'));
+    console.log(chalk.blue('---------------------------------'));
+    console.log(chalk.blue(`| Server Listening on Port 3000 |`));
+    console.log(chalk.blue('---------------------------------'));
 });
+
+
+module.exports  = app;
