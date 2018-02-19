@@ -1,4 +1,5 @@
-# Validator
+# Form Validator [![Build Status](https://travis-ci.org/cbartram/form-validation.svg?branch=develop)](https://travis-ci.org/cbartram/form-validation)
+
 
 Validator is a simple to use NodeJS/Express form validation middleware.
 It can be implemented with as little as one line of code and customized to fit any applications needs!
