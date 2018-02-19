@@ -5,7 +5,7 @@ install:
   - npm install
   - npm install -g codecov istanbul
 script:
-  - istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec --timeout 10000 --exit
+  - istanbul cover ./node_modules/mocha/bin/_mocha -- --timeout 10000 --exit
   - codecov
   - npm test
 cache:
