@@ -3,6 +3,8 @@
  */
 import AbstractRule from './AbstractRule';
 import ErrorCode from '../error/ErrorCode';
+import ValidationError from '../error/ValidationError';
+import RuleFactory from './RuleFactory';
 
 /**
  * AdvancedRule
@@ -18,13 +20,12 @@ import ErrorCode from '../error/ErrorCode';
  * @author Christian Bartram
  */
 export default class AdvancedRule extends AbstractRule {
-    constructor(name, req = false, value = 0, activationFunction, shouldBail = false) {
+    constructor(name, req = false, value = 0, activationFunction) {
         super(name);
         this.activationFunction = activationFunction;
         this.name = name;
         this.req = req;
         this.value = value;
-        this.shouldBail = shouldBail;
     }
 
     /**
@@ -59,13 +60,19 @@ export default class AdvancedRule extends AbstractRule {
      * Adds an additional reason why this
      * rule failed to the stack
      * @param name
+     * @param key
      * @param field
      * @param value
      */
-    addReason(name, field, value) {
-        let why = super.getWhy();
-        why.push(field + ErrorCode.codes()[name.toUpperCase()] + value);
-        super.setWhy(why);
+    addReason(name, key, field, value) {
+        //Create a "Stack Trace/ValidationError" object
+        let error = new ValidationError(key, RuleFactory.getRule(name));
+
+        //Set the error message
+        error.setWhy(field + ErrorCode.codes()[name.toUpperCase()] + value);
+
+        //Update the encapsulated value
+        super.setWhy(error.getError());
     }
 
     /**
@@ -148,14 +155,5 @@ export default class AdvancedRule extends AbstractRule {
             req: this.req,
             value: this.value
         }
-    }
-
-    /**
-     * Returns true if the script should stop
-     *  validating after this rule fails
-     * @returns {boolean|*}
-     */
-    bail() {
-        return this.shouldBail;
     }
 }

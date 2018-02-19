@@ -22,9 +22,9 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => res.sendFile("/public/index.html", {root: __dirname}));
 
 let opts = {
-    name:"required|alphanumeric|max:50",
-    address: "required|between:1,10",
-    birthday:"required|after:1994-01-01",
+    name:"max:50",
+    address: "between:1,10",
+    birthday:"after:1994-01-01",
     friends: "between:1,10"
 };
 

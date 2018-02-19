@@ -8,7 +8,7 @@
 export default class AbstractRule {
     constructor(name) {
         this.name = name;
-        this.why = []; //Holds reason(s) why validation failed
+        this.why = null;
     }
 
     /**
@@ -91,19 +91,11 @@ export default class AbstractRule {
     }
 
     /**
-     * Abstract method which returns a boolean of wether to bail after a
-     * failed validation
-     */
-    bail() {
-        throw new Error("This method requires implementation before use.")
-    }
-
-    /**
      * Returns true if the validation fails and false otherwise
      * @param field
      */
     failed(field) {
-
+        throw new Error("This method requires implementation before use")
     }
 
     /**
@@ -112,7 +104,7 @@ export default class AbstractRule {
      * @param value
      */
     failed(field, value) {
-
+        throw new Error("This method requires implementation before use")
     }
 
     /**

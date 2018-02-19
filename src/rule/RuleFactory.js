@@ -11,10 +11,10 @@ import moment from 'moment';
 
 /**
  * Rules Class
- * @desc Houses all of the Rule definitions
+ * @desc Collection of all of the Advanced  and Basic Rule constructors
  * @author Cbartram
  */
-export default class Rules {
+export default class RuleFactory {
 
     /**
      * Creates instances of each rule uniquely with an anonymous inner function

@@ -2,7 +2,9 @@
  * Created by christianbartram on 2/8/18.
  */
 import AbstractRule from './AbstractRule';
+import RuleFactory from './RuleFactory';
 import ErrorCode from '../error/ErrorCode';
+import ValidationError from "../error/ValidationError";
 
 
 /**
@@ -16,11 +18,10 @@ import ErrorCode from '../error/ErrorCode';
  * @author Christian Bartram
  */
 export default class BasicRule extends AbstractRule {
-    constructor(name, req = false, activationFunction, shouldBail = false) {
+    constructor(name, req = false, activationFunction) {
         super(name);
         this.req = req;
         this.activationFunction = activationFunction;
-        this.shouldBail = shouldBail;
     }
 
     /**
@@ -49,12 +50,18 @@ export default class BasicRule extends AbstractRule {
      * Adds an additional reason why this
      * rule failed to the stack
      * @param name
+     * @param key
      * @param field
      */
-    addReason(name, field) {
-        let why = super.getWhy();
-        why.push(field + ErrorCode.codes()[name.toUpperCase()]);
-        super.setWhy(why);
+    addReason(name, key, field) {
+        //Create a "Stack Trace/ValidationError" object
+        let error = new ValidationError(key, RuleFactory.getRule(name));
+
+        //Set the error message
+        error.setWhy(field + ErrorCode.codes()[name.toUpperCase()] + value);
+
+        //Update the encapsulated value
+        super.setWhy(error.getError());
     }
 
     /**
@@ -103,15 +110,6 @@ export default class BasicRule extends AbstractRule {
             name: this.name,
             req: this.req
         }
-    }
-
-    /**
-     * Returns true if the rule should stop validating other rules
-     * if this rule fails and false otherwise.
-     * @returns {boolean|*}
-     */
-    bail() {
-        return this.shouldBail;
     }
 
 }

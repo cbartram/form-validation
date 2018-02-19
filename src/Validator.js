@@ -5,6 +5,14 @@
  */
 import Parser from './parser/Parser';
 
+/**
+ * Validator
+ *
+ * Provides an entry point into the Library
+ * and validates each set of parsed rules
+ *
+ * @author Christian Bartram
+ */
 export default class Validator {
 
     /**
@@ -20,52 +28,50 @@ export default class Validator {
             req.why = "";
 
             let parsedRules = Parser.parse(data);
+            let failedRules = [];
 
             //Validate the data
             for(let key in parsedRules) {
                 let body = req.body[key]; //HTTP Request Body
                 let rules = parsedRules[key]; //Array of Rules to enforce
 
-                rules.forEach((rule, iterator) => {
+                rules.forEach(rule => {
                     //Check each rule against the value given in the HTTP Request body
                     if(rule.getType() === "ADVANCED") {
-
                         //Some rules require an HTTP request object to be validated
                         switch(rule.getName()) {
                             case "SAME":
                             case "DIFFERENT":
                                 if(rule.failed(body, rule.getValue(), req)) {
-                                    rule.addReason(rule.getName(), body, rule.getValue());
-                                    req.valid = false;
-                                    req.why = rule.reason();
-                                    next();
+                                    rule.addReason(rule.getName(), key, body, rule.getValue());
+                                    failedRules.push(rule);
                                 }
                                 break;
                             default:
                                 //Its just a normal advanced rule
                                 if (rule.failed(body, rule.getValue())) {
-                                    console.log("ADVANCED RULE", rule.getName() + " FAILED FOR " + key);
-                                    rule.addReason(rule.getName(), body, rule.getValue());
-
-                                    //todo Bail after the first error
-                                    req.valid = false;
-                                    req.why = rule.reason();
-                                    next();
+                                    rule.addReason(rule.getName(), key, body, rule.getValue());
+                                    failedRules.push(rule);
                                 }
 
                         }
                     } else {
                         //Basic Rule
                         if(rule.failed(body)) {
-                            console.log("BASIC RULE", rule.getName() + " FAILED FOR " + key);
-                            rule.addReason(rule.getName(), body);
-                            req.valid = false;
-                            req.why = rule.reason();
-                            next();
+                            rule.addReason(rule.getName(), key, body);
+                            failedRules.push(rule);
                         }
                     }
                 });
             }
+
+            failedRules.forEach(failedRule => {
+                console.log(failedRule)
+            });
+            //Evaluate List of Errors for the given rule and determine Bail
+            // if(rule.bail()) {
+            //
+            // }
 
             req.valid = true;
             next();

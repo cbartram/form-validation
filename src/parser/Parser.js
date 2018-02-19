@@ -1,4 +1,4 @@
-import Rules from '../rule/Rules'
+import Rules from '../rule/RuleFactory'
 
 /**
  * Created By Christian Bartram
@@ -46,31 +46,21 @@ export default class Parser {
                         if(element === "between" || element === "includes" || element === "not_in") {
                             let arr = value.split(",");
 
-                             if(element.toUpperCase() !== "BAIL") {
                                  rules[element.toUpperCase()].req = true;
                                  rules[element.toUpperCase()].value = arr;
                                  rules[element.toUpperCase()].why = [];
-                                 rules[element.toUpperCase()].shouldBail = shouldBail;
-                             }
 
                         } else {
 
-                            if(element.toUpperCase() !== "BAIL") {
                                 rules[element.toUpperCase()].req = true;
                                 rules[element.toUpperCase()].value = value;
                                 rules[element.toUpperCase()].why = [];
-                                rules[element.toUpperCase()].shouldBail = shouldBail
-                            }
+
                         }
 
                     } else {
-
-                        if(element.toUpperCase() !== "BAIL") {
                             rules[element.toUpperCase()].req = true;
                             rules[element.toUpperCase()].why = [];
-                            rules[element.toUpperCase()].shouldBail = shouldBail;
-                        }
-
                     }
                 });
             }

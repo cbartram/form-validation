@@ -60,8 +60,8 @@ the rules to enforce on each field.
 
 After the validation middleware finishes executing it will add two properties to the Express request object
 
-- **success** - Boolean True if the validation was successful false otherwise
-- **why** - Array Blank String if the validation was successful and an error message for why the validation failed
+- **success** - *Boolean* - True if the validation was successful false otherwise
+- **why** - *Array* - Array of Strings
 
 The properties above can be accessed in the route's callback function using `req.success` and `req.why`
 
