@@ -47,9 +47,9 @@ const options = {
 
 app.post('/your_form/submit', Validator.make(options), (req, res) => {
     //The req object will now be modified with 2 properties
-    //"success" and "why"
-    if(!req.success) {
-        res.send(req.why);
+    //"vailid" and "failed"
+    if(!req.valid) {
+        res.json(req.failed);
     }
 });
 ```
@@ -60,10 +60,10 @@ the rules to enforce on each field.
 
 After the validation middleware finishes executing it will add two properties to the Express request object
 
-- **success** - *Boolean* - True if the validation was successful false otherwise
-- **why** - *Array* - Array of Strings
+- **valid** - *Boolean* - True if the validation was successful false otherwise
+- **failed** - *Array* - Array of Objects
 
-The properties above can be accessed in the route's callback function using `req.success` and `req.why`
+The properties above can be accessed in the route's callback function using `req.valid` and `req.failed`
 
 ### Validation Rules
 
@@ -173,8 +173,9 @@ which can each be easily validated.
 
 ## Running the tests
 
-Unit tests can be run with the command `npm run test`
-
+Unit tests are located in the `test` directory and are all maintained in a single javascript file. All unit
+tests are Compatible with [Mocha](http://mochajs.org) and [Chai](http://chaijs.org) and
+can be run with the command quickly with the command `npm test`
 
 ## Deployment
 
@@ -187,6 +188,8 @@ Deploy this software to NPM using `npm publish`
 * [Javascript](https://mozilla.com) - Language Used
 * [NPM](http://npm.org) - Dependency Management
 * [Git](http://git.com) - Version Control
+* [Mocha](http://mochajs.com) - Testing Framework
+* [Chai](http://chaijs.com) - Assertion Library
 
 ## Contributing
 
@@ -194,7 +197,7 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/cbartram/form-validation/tags).
 
 ## Authors
 
@@ -207,4 +210,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Acknowledgments
 
 * Erika Pickard - for listening to me and helping me ;)
-* Laravel - for inspiring an effective way to validate forms
+* [Laravel](http://laravel.com) - for inspiring an effective way to validate forms

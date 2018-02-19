@@ -65,15 +65,9 @@ export default class Validator {
                 });
             }
 
-            failedRules.forEach(failedRule => {
-                console.log(failedRule)
-            });
-            //Evaluate List of Errors for the given rule and determine Bail
-            // if(rule.bail()) {
-            //
-            // }
-
-            req.valid = true;
+            //Evaluate list of errors
+            failedRules.length > 0 ? req.valid = false : req.valid = true;
+            req.failed = failedRules;
             next();
         };
     }

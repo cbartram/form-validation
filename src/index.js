@@ -29,7 +29,7 @@ let opts = {
 };
 
 app.post('/api/v1/form/submit', Validator.make(opts), (req, res) => {
-    res.json({success: true, validRequest: req.valid, why: req.why});
+    res.json({success: true, valid: req.valid, failed: req.failed});
 });
 
 app.listen(3000, () => {

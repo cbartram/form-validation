@@ -1,15 +1,22 @@
 /**
  * Created by christianbartram on 2/18/18.
  */
-const assert = require('assert');
-const chai = require('chai');
-const chaiHttp = require('chai-http');
+let AbstractRule = require("../lib/rule/AbstractRule").default;
+const RuleFactory = require("../lib/rule/RuleFactory").default;
+const expect = require('chai').expect;
 const request = require('supertest');
 const Validator = require("../lib/Validator").default;
 const app = require('../lib/index');
+const ErrorCode = require('../lib/error/ErrorCode').default;
+const ValidationError = require('../lib/error/ValidationError').default;
+const Util = require("../lib/Util").default;
+const Parser = require("../lib/parser/Parser").default;
 
+describe('Parser Tests', () => {
+    it("")
+});
 
-describe('Rules', () => {
+describe('Rules Tests', () => {
     it('Validates Alphanumeric Rule', (done) => {
        const opts = {
             name: "alphanumeric"
@@ -656,4 +663,304 @@ describe('Rules', () => {
             .expect(200, {success: true, validRequest: true, why: ""}, done)
     });
 
+});
+
+/**
+ * ====================
+ * Abstract Rule Tests
+ * ====================
+ */
+describe('AbstractRule Tests', () => {
+
+    let rule = new AbstractRule("ALPHANUMERIC");
+
+    it('getType() Throws an Error', (done) => {
+        expect(rule.getType).to.throw(Error);
+        done();
+    });
+
+    it('setName() Throws and Error', (done) => {
+        expect(rule.setName).to.throw(Error);
+        done();
+    });
+
+    it('setWhy() Sets the Why variable', (done) => {
+        rule.setWhy("hi");
+        expect(rule.getWhy()).to.be.an('string');
+        done();
+    });
+
+    it('getWhy() Returns Why', (done) => {
+        rule.setWhy({name: 'foo'});
+        expect(rule.getWhy()).to.be.an("object").with.property("name");
+        done();
+    });
+
+    it('addReason() Throws and Error', (done) => {
+        expect(rule.addReason).to.throw(Error);
+        done();
+    });
+
+    it('getName() To be a string', (done) => {
+        expect(rule.getName()).to.be.an("string").that.equals("ALPHANUMERIC");
+        done();
+    });
+
+    it('getRule() Throws and Error', (done) => {
+        expect(rule.getRule).to.throw(Error);
+        done();
+    });
+
+    it('getActivationFunction() Throws and Error', (done) => {
+        expect(rule.getActivationFunction).to.throw(Error);
+        done();
+    });
+
+    it('failed() Throws and Error', (done) => {
+        expect(rule.failed).to.throw(Error);
+        done();
+    });
+});
+
+/**
+ * ================
+ * Basic Rule Tests
+ * ================
+ */
+describe("Basic Rule Tests", () => {
+    //Get any basic rule
+   let rule = RuleFactory.getRule("ALPHANUMERIC");
+
+    it('setReq() Sets the required property', (done) => {
+        rule.req = true;
+        expect(rule.req).to.be.an("boolean").that.equals(true);
+        done()
+    });
+
+    it('getReq() Gets the required property', (done) => {
+        rule.req = false;
+        expect(rule.req).to.be.an("boolean").that.equals(false);
+        done()
+    });
+
+    it('getType() returns the string "BASIC" ', (done) => {
+        expect(rule.getType()).to.be.an("string").that.equals("BASIC");
+        done()
+    });
+
+    it('failed() returns false', (done) => {
+        expect(rule.failed("abc++/")).to.be.an("boolean").that.equals(true);
+        done()
+    });
+
+    it('getActivationFunction() returns a valid function', (done) => {
+        expect(rule.getActivationFunction()).to.be.an("function");
+        done()
+    });
+
+    it('reason() returns an object impl of the failed rule', (done) => {
+        rule.addReason("ALPHANUMERIC", "name", "abc++");
+        expect(rule.reason()).to.be.an("object").to.deep.equal({name: "ALPHANUMERIC", key: "name", why: "abc++: must be alphanumeric." });
+        done()
+    });
+
+    it('getRule() returns an object impl of the failed rule', (done) => {
+        expect(rule.getRule()).to.be.an("object").to.deep.equal({name: "ALPHANUMERIC", req: false });
+        done()
+    });
+
+});
+
+/**
+ * ===================
+ * Advanced Rule Tests
+ * ===================
+ */
+describe("Advanced Rule Tests", () => {
+
+    let rule = RuleFactory.getRule("AFTER");
+
+   it('setReq() Sets the required property', (done) => {
+        rule.setReq(true);
+        expect(rule.getReq()).to.be.an("boolean").that.equals(true);
+        done()
+   });
+
+   it('getReq() Gets the required property', (done) => {
+        rule.setReq(false);
+        expect(rule.getReq()).to.be.an("boolean").that.equals(false);
+        done()
+    });
+
+    it('isRequired() Gets the required property', (done) => {
+        rule.setReq(true);
+        expect(rule.isRequired()).to.be.an("boolean").that.equals(true);
+        done()
+    });
+
+    it('getType() returns the string "Advanced" ', (done) => {
+        rule.setReq(true);
+        expect(rule.getType()).to.be.an("string").that.equals("ADVANCED");
+        done()
+    });
+
+    it('setReq() Sets the required property', (done) => {
+        rule.setReq(true);
+        expect(rule.getReq()).to.be.an("boolean").that.equals(true);
+        done()
+    });
+
+    it('reason() Gets the reason for the failure', (done) => {
+        rule.addReason("AFTER", "birthday", "2017-01-01", "2020-01-01");
+        expect(rule.reason()).to.be.an("object").to.deep.equal({key: "birthday", name: "AFTER", why: "2017-01-01 was expected to be chronologically after 2020-01-01"});
+        done()
+    });
+
+    it('failed() returns false', (done) => {
+        expect(rule.failed("2017-01-01", "2020-01-01")).to.be.an("boolean").that.equals(true);
+        done()
+    });
+
+    it('getActivationFunction() returns a valid function', (done) => {
+        expect(rule.getActivationFunction()).to.be.an("function");
+        done()
+    });
+
+    it('getValue() returns the rules value', (done) => {
+        rule.setValue("2017-01-01");
+        expect(rule.getValue()).to.be.an("string").that.equals("2017-01-01");
+        done()
+    });
+
+    it('getName() returns the rules name', (done) => {
+        expect(rule.getName()).to.be.an("string").that.equals("AFTER");
+        done()
+    });
+
+    it('getRule() returns the rule implementation of the rule object ', (done) => {
+        expect(rule.getRule()).to.be.an("object").to.deep.equal({name: "AFTER", req: true, value: "2017-01-01"});
+        done()
+    });
+});
+
+/**
+ * ==================
+ * Rule Factory Tests
+ * ==================
+ */
+describe("Rule Factory Tests", () => {
+
+   it("Ensures are Rules are in the Object", (done) => {
+      let keys = Object.keys(RuleFactory.rules());
+      expect(RuleFactory.rules()).to.have.keys(keys);
+      done();
+   });
+
+    it("Ensures a valid rule is returned", (done) => {
+        const rule = RuleFactory.getRule("AFTER");
+
+        expect(rule).to.have.own.property("name");
+        expect(rule).to.have.own.property("why");
+        expect(rule).to.have.own.property("value");
+        expect(rule).to.have.own.property("req");
+        expect(rule).to.have.own.property("activationFunction");
+
+        done();
+    });
+
+    it("Ensures a error is thrown for an invalid rule", (done) => {
+        expect(RuleFactory.getRule).to.throw(Error);
+        done();
+    });
+});
+
+/**
+ * ==================
+ * Error Code Testing
+ * ==================
+ */
+describe("Error Code Tests", () => {
+
+    it("Ensures Error Codes are all valid Strings", (done) => {
+        let keys = Object.keys(ErrorCode.codes());
+        expect(ErrorCode.codes()).to.have.keys(keys);
+        done();
+    });
+
+    it("Ensures Error Codes have valid Values", (done) => {
+        let keys = Object.values(ErrorCode.codes());
+        expect(keys).to.be.an("array");
+        done();
+    });
+
+});
+
+/**
+ * ========================
+ * Validation Error Testing
+ * ========================
+ */
+describe("Validation Error Tests", () => {
+
+    let error = new ValidationError("name", RuleFactory.getRule("ALPHA"));
+
+    it("getWhy() returns the correct string", (done) => {
+        error.setWhy("Because it just is");
+        expect(error.getWhy()).to.be.a("string");
+        done();
+    });
+
+    it("setWhy() sets the property properly", (done) => {
+        error.setWhy("Because it just is");
+        expect(error.why).to.be.a("string");
+        done();
+    });
+
+    it("getRule() returns the Rule reference of the Error", (done) => {
+        expect(error.getRule()).to.have.own.property("name");
+        expect(error.getRule()).to.have.own.property("req");
+        expect(error.getRule()).to.have.own.property("why");
+        expect(error.getRule()).to.have.own.property("activationFunction");
+        done();
+    });
+
+    it("getError() returns the object impl of the ValidationError", (done) => {
+        expect(error.getError().name).to.be.a("string").that.deep.equals("ALPHA");
+        expect(error.getError().why).to.be.a("string").that.deep.equals("Because it just is");
+        expect(error.getError().key).to.be.a("string").that.deep.equals("name");
+        done();
+    });
+});
+
+
+/**
+ * ==========
+ * Util Tests
+ * ==========
+ */
+describe("Util Tests", () => {
+   it("Ensures between() operates as expected", (done) => {
+       expect(Util.isBetween(4, 1, 5)).is.a("boolean").that.deep.equals(true);
+       expect(Util.isBetween(50, 1, 5)).is.a("boolean").that.deep.equals(false);
+       done();
+   });
+
+    it("Ensures isNullOrUndefined() operates as expected", (done) => {
+        let x; //x is purposely undefined for testing purposes
+        let y = 50;
+
+        expect(Util.isNullOrUndefined(null)).is.a("boolean").that.deep.equals(true);
+        expect(Util.isNullOrUndefined(x)).is.a("boolean").that.deep.equals(true);
+        expect(Util.isNullOrUndefined(y)).is.a("boolean").that.deep.equals(false);
+        done();
+    });
+
+    it("Ensures hasDuplicates() operates as expected", (done) => {
+        let x = [0, 1, 2, 3, 5];
+        let y = [0, 0, 1, 1, 3, 5, 3];
+
+        expect(Util.hasDuplicates(y)).is.a("boolean").that.deep.equals(true);
+        expect(Util.hasDuplicates(x)).is.a("boolean").that.deep.equals(false);
+        done();
+    });
 });

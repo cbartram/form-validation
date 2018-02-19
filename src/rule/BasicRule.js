@@ -26,11 +26,11 @@ export default class BasicRule extends AbstractRule {
 
     /**
      * Sets the rule to active. In the list of Rules
-     * @param active
+     * @param req
      */
-    setActive(active) {
-        if(typeof active === "boolean") {
-            this.active = active;
+    setReq(req) {
+        if(typeof req === "boolean") {
+            this.req = req;
         } else {
             throw new Error("Active must be of type Boolean");
         }
@@ -58,7 +58,7 @@ export default class BasicRule extends AbstractRule {
         let error = new ValidationError(key, RuleFactory.getRule(name));
 
         //Set the error message
-        error.setWhy(field + ErrorCode.codes()[name.toUpperCase()] + value);
+        error.setWhy(field + ErrorCode.codes()[name.toUpperCase()]);
 
         //Update the encapsulated value
         super.setWhy(error.getError());
@@ -87,7 +87,7 @@ export default class BasicRule extends AbstractRule {
      * request and false otherwise
      * @returns {boolean}
      */
-    isActive() {
+    isReq() {
         return this.req === true;
     }
 

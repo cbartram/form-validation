@@ -114,7 +114,7 @@ export default class AbstractRule {
      * @param req Express request object
      */
     failed(field, value, req) {
-
+        throw new Error("This method requires implementation before use")
     }
 
 }
