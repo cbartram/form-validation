@@ -56,7 +56,7 @@ export default class Rules {
          REGEX: new AdvancedRule("REGEX", false, 0, (field, value) => new RegExp(value).test(field)),
          SIZE: new AdvancedRule("SIZE", false, 0, (field, value) => parseInt(value) === field.length),
          SAME: new AdvancedRule("SAME", false, 0, (field, value, req) => (req.body[value] === field)),
-         STRING: new BasicRule("STRING", false, (field) => (typeof field !== "string")),
+         STRING: new BasicRule("STRING", false, (field) => (typeof field === "string")),
       }
     }
 

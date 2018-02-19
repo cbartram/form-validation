@@ -527,4 +527,133 @@ describe('Rules', () => {
             .expect(200, {success: true, validRequest: true, why: ""}, done)
     });
 
+    it('Validates Not_In Rule', (done) => {
+        const opts = {
+            name: "not_in:chris,fred,joe,george"
+        };
+
+
+        app.post('/notin', Validator.make(opts), (req, res) => {
+            res.json({success: true, validRequest: req.valid, why: req.why});
+        });
+
+        request(app)
+            .post('/notin')
+            .set('Content-Type', 'application/json')
+            .set('accept', 'json')
+            .send({name: ["Lacy"]})
+            .expect(200, {success: true, validRequest: true, why: ""}, done)
+    });
+
+    it('Validates Required Rule', (done) => {
+        const opts = {
+            name: "required"
+        };
+
+
+        app.post('/required', Validator.make(opts), (req, res) => {
+            res.json({success: true, validRequest: req.valid, why: req.why});
+        });
+
+        request(app)
+            .post('/required')
+            .set('Content-Type', 'application/json')
+            .set('accept', 'json')
+            .send({name: true})
+            .expect(200, {success: true, validRequest: true, why: ""}, done)
+    });
+
+    it('Validates Regex Rule', (done) => {
+        const opts = {
+            name: "regex:([A-Z])"
+        };
+
+
+        app.post('/regex', Validator.make(opts), (req, res) => {
+            res.json({success: true, validRequest: req.valid, why: req.why});
+        });
+
+        request(app)
+            .post('/regex')
+            .set('Content-Type', 'application/json')
+            .set('accept', 'json')
+            .send({name: 'M'})
+            .expect(200, {success: true, validRequest: true, why: ""}, done)
+    });
+
+    //Todo test this for arrays as well
+    it('Validates Size Rule', (done) => {
+        const opts = {
+            name: "size:3"
+        };
+
+
+        app.post('/size', Validator.make(opts), (req, res) => {
+            res.json({success: true, validRequest: req.valid, why: req.why});
+        });
+
+        request(app)
+            .post('/size')
+            .set('Content-Type', 'application/json')
+            .set('accept', 'json')
+            .send({name: 'mon'})
+            .expect(200, {success: true, validRequest: true, why: ""}, done)
+    });
+
+
+    it('Validates Same Rule', (done) => {
+        const opts = {
+            name: "same:surname",
+            surname:"required"
+        };
+
+
+        app.post('/same', Validator.make(opts), (req, res) => {
+            res.json({success: true, validRequest: req.valid, why: req.why});
+        });
+
+        request(app)
+            .post('/same')
+            .set('Content-Type', 'application/json')
+            .set('accept', 'json')
+            .send({name: "foo", surname: "foo"})
+            .expect(200, {success: true, validRequest: true, why: ""}, done)
+    });
+
+    it('Validates Regex Rule', (done) => {
+        const opts = {
+            name: "regex:([A-Z])"
+        };
+
+
+        app.post('/regex', Validator.make(opts), (req, res) => {
+            res.json({success: true, validRequest: req.valid, why: req.why});
+        });
+
+        request(app)
+            .post('/regex')
+            .set('Content-Type', 'application/json')
+            .set('accept', 'json')
+            .send({name: 'M'})
+            .expect(200, {success: true, validRequest: true, why: ""}, done)
+    });
+
+    it('Validates String Rule', (done) => {
+        const opts = {
+            name: "string"
+        };
+
+
+        app.post('/string', Validator.make(opts), (req, res) => {
+            res.json({success: true, validRequest: req.valid, why: req.why});
+        });
+
+        request(app)
+            .post('/string')
+            .set('Content-Type', 'application/json')
+            .set('accept', 'json')
+            .send({name: "a string"})
+            .expect(200, {success: true, validRequest: true, why: ""}, done)
+    });
+
 });
