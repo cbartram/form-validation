@@ -42,32 +42,22 @@ export default class Validator {
                                 }
                                 break;
                             default:
-                                console.log(rule.getActivationFunction()(body, rule.getValue()));
                                 //Its just a normal advanced rule
                                 if (rule.failed(body, rule.getValue())) {
-                                    console.log("RULE ", rule.getName() + " FAILED");
+                                    console.log("ADVANCED RULE", rule.getName() + " FAILED FOR " + key);
                                     rule.addReason(rule.getName(), body, rule.getValue());
 
-                                    //Bail after the first error
-                                    if(rule.bail()) {
-                                        req.valid = false;
-                                        req.why = rule.reason();
-                                        next();
-                                    } else {
-                                        //Continue until the last validation then bail
-                                        if(iterator === rules.length) {
-                                            req.valid = false;
-                                            req.why = rule.reason();
-                                            next();
-                                        }
-                                    }
+                                    //todo Bail after the first error
+                                    req.valid = false;
+                                    req.why = rule.reason();
+                                    next();
                                 }
 
                         }
                     } else {
                         //Basic Rule
                         if(rule.failed(body)) {
-                            //todo body is undefined
+                            console.log("BASIC RULE", rule.getName() + " FAILED FOR " + key);
                             rule.addReason(rule.getName(), body);
                             req.valid = false;
                             req.why = rule.reason();

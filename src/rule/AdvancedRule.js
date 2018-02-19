@@ -59,6 +59,8 @@ export default class AdvancedRule extends AbstractRule {
      * Adds an additional reason why this
      * rule failed to the stack
      * @param name
+     * @param field
+     * @param value
      */
     addReason(name, field, value) {
         let why = super.getWhy();
@@ -68,12 +70,10 @@ export default class AdvancedRule extends AbstractRule {
 
     /**
      * Formats the reason why the Http request failed
-     * @param field
-     * @param value
      * @returns {string}
      */
     reason() {
-       return  super.getWhy();
+       return super.getWhy();
     }
 
     /**
