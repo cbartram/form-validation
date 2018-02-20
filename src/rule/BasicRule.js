@@ -19,7 +19,7 @@ import ValidationError from "../error/ValidationError";
  */
 export default class BasicRule extends AbstractRule {
     constructor(name, req = false, activationFunction) {
-        super(name);
+        super(name, req);
         this.req = req;
         this.activationFunction = activationFunction;
     }
@@ -29,11 +29,7 @@ export default class BasicRule extends AbstractRule {
      * @param req
      */
     setReq(req) {
-        if(typeof req === "boolean") {
-            this.req = req;
-        } else {
-            throw new Error("Active must be of type Boolean");
-        }
+        super.setReq(req)
     }
 
     /**
@@ -87,8 +83,8 @@ export default class BasicRule extends AbstractRule {
      * request and false otherwise
      * @returns {boolean}
      */
-    isReq() {
-        return this.req === true;
+    isRequired() {
+       return super.isRequired()
     }
 
     /**

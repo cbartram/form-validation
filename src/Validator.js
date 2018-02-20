@@ -19,7 +19,7 @@ export default class Validator {
      * Parses the validation rules
      * and enforces the rules on the HTTP Request
      * @param data Object
-     * @returns {initialize}
+     * @returns Function {initialize}
      */
     static make(data) {
         return function initialize(req, res, next) {
@@ -28,9 +28,6 @@ export default class Validator {
             req.why = "";
 
             let parsedRules = Parser.parse(data);
-
-            console.log(parsedRules);
-
             let failedRules = [];
 
             //Validate the data
@@ -67,6 +64,8 @@ export default class Validator {
                     }
                 });
             }
+
+            console.log(parsedRules);
 
             //Evaluate list of errors
             failedRules.length > 0 ? req.valid = false : req.valid = true;
