@@ -1,6 +1,8 @@
 /**
  * Created by christianbartram on 2/6/18.
  */
+const TimeZone = require("./TimeZone").default;
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const Validator = require('./Validator').default;
@@ -27,6 +29,8 @@ let opts = {
     birthday:"after:1994-01-01",
     friends: "between:1,10"
 };
+
+Validator.add(new TimeZone("TIMEZONE", false, (field) => field === "foo", " is not a valid timezone"));
 
 app.post('/api/v1/form/submit', Validator.make(opts), (req, res) => {
     res.json({success: true, valid: req.valid, failed: req.failed});
