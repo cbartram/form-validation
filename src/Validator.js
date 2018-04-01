@@ -4,6 +4,7 @@
  * todo Short circuit validation option, multiple nested layers for json
  */
 import Parser from './parser/Parser';
+import RuleFactory from "./rule/RuleFactory";
 
 /**
  * Validator
@@ -14,15 +15,23 @@ import Parser from './parser/Parser';
  * @author Christian Bartram
  */
 export default class Validator {
+    static addCustomRule(rule) {
+        //Init the Rules
+        RuleFactory.init();
+        RuleFactory.addRule(rule.getName(), rule);
+    }
 
     /**
      * Parses the validation rules
      * and enforces the rules on the HTTP Request
      * @param data Object
-     * @returns {initialize}
+     * @returns Function {initialize}
      */
     static make(data) {
         return function initialize(req, res, next) {
+            //Init rules
+            RuleFactory.init();
+
             //Add 2 variables to the request
             req.valid = false;
             req.why = "";
@@ -65,15 +74,9 @@ export default class Validator {
                 });
             }
 
-            failedRules.forEach(failedRule => {
-                console.log(failedRule)
-            });
-            //Evaluate List of Errors for the given rule and determine Bail
-            // if(rule.bail()) {
-            //
-            // }
-
-            req.valid = true;
+            //Evaluate list of errors
+            failedRules.length > 0 ? req.valid = false : req.valid = true;
+            req.failed = failedRules;
             next();
         };
     }

@@ -1,12 +1,13 @@
 /**
  * Created by christianbartram on 2/6/18.
  */
+const RuleFactory = require("./rule/RuleFactory").default;
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const Validator = require('./Validator').default;
 const chalk = require('chalk');
 const app = express();
-
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -29,7 +30,7 @@ let opts = {
 };
 
 app.post('/api/v1/form/submit', Validator.make(opts), (req, res) => {
-    res.json({success: true, validRequest: req.valid, why: req.why});
+    res.json({success: true, valid: req.valid, failed: req.failed});
 });
 
 app.listen(3000, () => {

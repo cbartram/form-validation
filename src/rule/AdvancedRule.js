@@ -21,7 +21,7 @@ import RuleFactory from './RuleFactory';
  */
 export default class AdvancedRule extends AbstractRule {
     constructor(name, req = false, value = 0, activationFunction) {
-        super(name);
+        super(name, req);
         this.activationFunction = activationFunction;
         this.name = name;
         this.req = req;
@@ -33,7 +33,7 @@ export default class AdvancedRule extends AbstractRule {
      * @returns {boolean}
      */
     isRequired() {
-        return this.req === true;
+        return super.isRequired()
     }
 
     /**
@@ -49,11 +49,7 @@ export default class AdvancedRule extends AbstractRule {
      * @param req Boolean
      */
     setReq(req) {
-        if(typeof req === "boolean") {
-            this.req = req;
-        } else {
-            throw new Error("Req must be of type boolean")
-        }
+        super.setReq(req);
     }
 
     /**
@@ -117,7 +113,7 @@ export default class AdvancedRule extends AbstractRule {
      * @returns {*}
      */
     getReq() {
-        return this.req;
+        return super.getReq();
     }
 
     /**

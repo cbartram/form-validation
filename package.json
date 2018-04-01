@@ -1,16 +1,20 @@
 {
-  "name": "form-validation",
-  "version": "1.0.0",
-  "description": "Validates HTML5 Form Fields for proper input",
+  "name": "node-form-validation",
+  "version": "1.0.1",
+  "description": "Validates HTML5 Form Fields for proper input using a simple NodeJS API",
   "main": "src/js/index.js",
+  "url": "https://github.com/cbartram/form-validation",
+  "email": "cbartram3@gmail.com",
   "scripts": {
     "build": "backpack build",
-    "test": "cd test && mocha --timeout 10000 --exit",
+    "test": "cd test && mocha --recursive --timeout 10000 --exit",
     "dev": "backpack",
     "compile": "./node_modules/.bin/babel --presets es2015,stage-0 -d lib/ src/"
   },
   "keywords": [
     "form",
+    "node",
+    "laravel",
     "html5",
     "validation",
     "javascript",

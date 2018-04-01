@@ -15,8 +15,7 @@ To get started using Validator simply install it as a dependency using `npm inst
 
 Validator will be provided to your project using a simple import statement
 
-`const Validator = require("form-validation")` or if you are using ES6
-`import Validator from "form-validation"`
+`const Validator = require("form-validation/lib/Validator").default`
 
 ### Installing
 
@@ -33,13 +32,12 @@ into the application is found under `/form-validation/src/index.js`
 
 ### Using Form Validation
 
-Since this Validator was designed as Express Middleware it sits right between
-the request being received by express and when the request is processed in the routes callback function.
-It is extremely easy to implement form validation for your NodeJS Backend!
+Since this Validator was designed as Express Middleware it sits right between the route callback function
+and is designed to be quickly implemented into your NodeJS Backend!
 
 Lets take a quick look at a basic express example:
 ```javascript
-const Validator = require("form-validation");
+const Validator = require("node-form-validation");
 
 const options = {
     name: 'required'
@@ -47,9 +45,9 @@ const options = {
 
 app.post('/your_form/submit', Validator.make(options), (req, res) => {
     //The req object will now be modified with 2 properties
-    //"success" and "why"
-    if(!req.success) {
-        res.send(req.why);
+    //"vailid" and "failed"
+    if(!req.valid) {
+        res.json(req.failed);
     }
 });
 ```
@@ -60,14 +58,27 @@ the rules to enforce on each field.
 
 After the validation middleware finishes executing it will add two properties to the Express request object
 
-- **success** - *Boolean* - True if the validation was successful false otherwise
-- **why** - *Array* - Array of Strings
+- **valid** - *Boolean* - True if the validation was successful false otherwise
+- **failed** - *Array* - Array of `Error` Objects for each rule that Failed validation
 
-The properties above can be accessed in the route's callback function using `req.success` and `req.why`
+The properties above can be accessed in the route's callback function using `req.valid` and `req.failed`
+
+An error object returned from the `req.failed` attempts to describe which rule
+ failed and provide detailed information about the failure. The object will appear as follows:
+```javascript
+{
+      "name": "BETWEEN",
+      "why": {
+         "name": "BETWEEN",
+         "key": "friends",
+         "why": "50 must be contained in the set 1,10"
+        }
+}
+```
 
 ### Validation Rules
 
-Validation Rules are the core of this framework and can help validate almost
+Validation Rules are the core of this library and can help validate almost
 any HTTP POST data quickly and easily.
 
 All rules inherit the parent class `AbstractRule` which provides two different (but important)
@@ -81,7 +92,7 @@ Max is an advanced rule because it requires not only knowing to validate a value
 You can quickly combine combinations of Basic and Advanced rules to validate form data.
 Combinations can be chained together using the pipe `|` and properties for Advanced Rules are set using `:`
 
-Lets take a look at an example!
+Lets take a look at an example to help clarify these concepts!
 ```javascript
 //POST Body
 {
@@ -94,7 +105,7 @@ Lets take a look at an example!
 ```
 
 ```javascript
-const Validator = require("form-validation");
+const Validator = require("form-validation").default;
 
 
 var options = {
@@ -111,7 +122,7 @@ Validator.make(options);
 
 The example above illustrates a basic POST Body and its respective validation options.
 Notice how in the name field `required` is chained together with `alphanumeric` to enforce both rules upon the field.
-Advanced rule such as between use the `:` symbol to identify which values should be used as input into their activation function.
+Advanced rules (such as `between` in this case) use the `:` symbol to identify which values should be used as input into their activation function.
 For more information about how the rules are validated and processed see the **Under the Hood** section below!
 
 It is important to note that not all rules can be chained together for instance, `before` and `credit_card` cannot be chained
@@ -163,18 +174,41 @@ list of all the validation rules.
 ## Under The Hood
 
 All rules go through a single validation process before they are deemed valid or invalid.
-each rule is parsed using the `|` and `:` symbols so that rules can be broken down into either
-`AdvancedRules` or `BasicRules`. An advanced rule contains a value property while a basic rule does not.
-The `required` rules is advanced because it does not require a value while the `max` rule is advanced because it requires a value
-i.e. `max:5`.
+each rule is parsed using the `|` and `:` symbols so that rules can be identified as either
+`AdvancedRules` or `BasicRules`.
 
-Once the parsing process is complete the Rules are transformed into an array containing each `AbstractRule` object
-which can each be easily validated.
+```javascript
+//input
+let opts = {
+    name:"max:50",
+    friends: "required"
+};
+
+//Output after parsing
+{ name:
+   [ AdvancedRule {
+       name: 'MAX',
+       why: [],
+       activationFunction: [Function],
+       req: true,
+       value: '50' } ],
+  friends:
+    [ BasicRule {
+        name: "REQUIRED",
+        why: [],
+        activationFunction: [Function],
+        req: true
+      } ]
+}
+```
+Each rule includes a property called `activationFunction` which is a unique function which accepts valid input
+and rejects invalid input.
 
 ## Running the tests
 
-Unit tests can be run with the command `npm run test`
-
+Unit tests are located in the `test` directory and are all maintained in a single javascript file. All unit
+tests are Compatible with [Mocha](http://mochajs.org) and [Chai](http://chaijs.org) and
+can be run with the command quickly with the command `npm test`
 
 ## Deployment
 
@@ -187,6 +221,8 @@ Deploy this software to NPM using `npm publish`
 * [Javascript](https://mozilla.com) - Language Used
 * [NPM](http://npm.org) - Dependency Management
 * [Git](http://git.com) - Version Control
+* [Mocha](http://mochajs.com) - Testing Framework
+* [Chai](http://chaijs.com) - Assertion Library
 
 ## Contributing
 
@@ -194,7 +230,7 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/cbartram/form-validation/tags).
 
 ## Authors
 
@@ -207,4 +243,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Acknowledgments
 
 * Erika Pickard - for listening to me and helping me ;)
-* Laravel - for inspiring an effective way to validate forms
+* [Laravel](http://laravel.com) - for inspiring an effective way to validate forms

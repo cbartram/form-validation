@@ -19,21 +19,17 @@ import ValidationError from "../error/ValidationError";
  */
 export default class BasicRule extends AbstractRule {
     constructor(name, req = false, activationFunction) {
-        super(name);
+        super(name, req);
         this.req = req;
         this.activationFunction = activationFunction;
     }
 
     /**
      * Sets the rule to active. In the list of Rules
-     * @param active
+     * @param req
      */
-    setActive(active) {
-        if(typeof active === "boolean") {
-            this.active = active;
-        } else {
-            throw new Error("Active must be of type Boolean");
-        }
+    setReq(req) {
+        super.setReq(req)
     }
 
     /**
@@ -58,7 +54,7 @@ export default class BasicRule extends AbstractRule {
         let error = new ValidationError(key, RuleFactory.getRule(name));
 
         //Set the error message
-        error.setWhy(field + ErrorCode.codes()[name.toUpperCase()] + value);
+        error.setWhy(field + ErrorCode.codes()[name.toUpperCase()]);
 
         //Update the encapsulated value
         super.setWhy(error.getError());
@@ -87,8 +83,8 @@ export default class BasicRule extends AbstractRule {
      * request and false otherwise
      * @returns {boolean}
      */
-    isActive() {
-        return this.req === true;
+    isRequired() {
+       return super.isRequired()
     }
 
     /**

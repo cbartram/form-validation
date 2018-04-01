@@ -6,7 +6,8 @@
  * @author Christian Bartram
  */
 export default class AbstractRule {
-    constructor(name) {
+    constructor(name, req) {
+        this.req = req;
         this.name = name;
         this.why = null;
     }
@@ -45,6 +46,37 @@ export default class AbstractRule {
      */
     getWhy() {
         return this.why;
+    }
+
+
+    /**
+     * Returns true if the rule is required
+     * @param req boolean
+     */
+    setReq(req) {
+        if(typeof req === "boolean") {
+            this.req = req;
+        } else {
+            throw new Error("Req must be of type boolean")
+        }
+    }
+
+    /**
+     * Returns the required property
+     */
+    getReq() {
+        return this.req;
+    }
+
+    /**
+     * Returns true if the property is required and false otherwise
+     */
+    isRequired() {
+        return this.req === true;
+    }
+
+    reason() {
+        throw new Error("This method requires implementation before use")
     }
 
     /**
@@ -114,7 +146,7 @@ export default class AbstractRule {
      * @param req Express request object
      */
     failed(field, value, req) {
-
+        throw new Error("This method requires implementation before use")
     }
 
 }
