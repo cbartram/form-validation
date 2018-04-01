@@ -5,7 +5,6 @@
  */
 import Parser from './parser/Parser';
 import RuleFactory from "./rule/RuleFactory";
-import ErrorCode from "./error/ErrorCode";
 
 /**
  * Validator
@@ -16,14 +15,10 @@ import ErrorCode from "./error/ErrorCode";
  * @author Christian Bartram
  */
 export default class Validator {
-    /**
-     * Adds a custom rule to be validated
-     * @param rule Rule object <? extends CustomRule>
-     */
-    static add(rule) {
+    static addCustomRule(rule) {
+        //Init the Rules
         RuleFactory.init();
-        ErrorCode.init();
-        RuleFactory.addRule(rule.getName().toUpperCase(), rule.getErrorMsg(), rule);
+        RuleFactory.addRule(rule.getName(), rule);
     }
 
     /**
@@ -34,17 +29,8 @@ export default class Validator {
      */
     static make(data) {
         return function initialize(req, res, next) {
-
-            //TODO Unit tests dont run because rules are never init'd figure out a way to
-            //todo not need to init them so that if a custom rule is added a single "rules" object is updated
-            //todo and all references to RuleFactory.rules() reference the rules with the new custom rule
-            //todo if more than one custom rule is added RuleFactory needs to keep adding those rules to a stack
-            //todo but RuleFactory.rules() must always return either the basic set of rules OR the custom set + basic set but NEVER null
-            //If there was not a custom rule added init methods before any processing takes place
-          //  if(!RuleFactory.isInitialized() && !ErrorCode.isInitialized()) {
-                RuleFactory.init();
-                ErrorCode.init();
-          //  }
+            //Init rules
+            RuleFactory.init();
 
             //Add 2 variables to the request
             req.valid = false;

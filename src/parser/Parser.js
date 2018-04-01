@@ -1,4 +1,4 @@
-import RuleFactory from '../rule/RuleFactory'
+import Rules from '../rule/RuleFactory'
 
 /**
  * Created By Christian Bartram
@@ -25,7 +25,7 @@ export default class Parser {
 
 
             //Get rules definitions from rules class
-            let rules = RuleFactory.rules();
+            let rules = Rules.rules();
             let shouldBail = false;
 
             if(data.hasOwnProperty(key)) {

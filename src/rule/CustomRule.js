@@ -1,56 +1,49 @@
-import AbstractRule from "./AbstractRule";
+import AbstractRule from './AbstractRule';
+import RuleFactory from './RuleFactory'
 
-
+/**
+ * Custom Rule
+ *
+ * @author Christian Bartram
+ */
 export default class CustomRule extends AbstractRule {
-    constructor(name, req = false) {
+    constructor(name, req) {
         super(name, req);
     }
 
-    getErrorMsg() {
-        throw Error("This method requires implementation before use")
-    }
-
-    /**
-     * Returns the type of Rule that is being implemented
-     * @return String rule type
-     */
     getType() {
-        throw Error("This method requires implementation before use")
+        throw new Error("This method requires implementation before use")
     }
 
-    /**
-     * Overloaded method which adds a reason to the why array
-     * @param name String name
-     * @param field
-     */
-    addReason(name, field) {
+    addReason() {
         throw new Error("This method requires implementation before use")
     }
 
     /**
-     * Adds a reason to the why array
-     * @param name
+     * Returns true if the validation fails and false otherwise
+     * @param field
+     */
+    failed(field) {
+        throw new Error("This method requires implementation before use")
+    }
+
+    /**
+     * Returns true if the validation fails and false otherwise
      * @param field
      * @param value
      */
-    addReason(name, field, value) {
+    failed(field, value) {
         throw new Error("This method requires implementation before use")
     }
 
     /**
-     * Abstract method implemented returns an object representation of
-     * the rule
+     * Returns true if the validation fails and false otherwise
+     * @param field
+     * @param value
+     * @param req Express request object
      */
-    getRule() {
-        throw new Error("This method requires implementation before use.")
-    }
-
-    /**
-     * Abstract method which returns the activation function for the rule
-     * @return function
-     */
-    getActivationFunction() {
-        throw new Error("This method requires implementation before use.")
+    failed(field, value, req) {
+        throw new Error("This method requires implementation before use")
     }
 
 }

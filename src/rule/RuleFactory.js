@@ -9,7 +9,6 @@ import Util from '../Util';
 import validator from 'validator';
 import moment from 'moment';
 import CustomRule from "./CustomRule";
-import ErrorCode from "../error/ErrorCode";
 
 /**
  * Rules Class
@@ -17,7 +16,9 @@ import ErrorCode from "../error/ErrorCode";
  * @author Cbartram
  */
 export default class RuleFactory {
+
     static init() {
+        this.isInitialized = true;
         this.r = {
             ALPHANUMERIC: new BasicRule("ALPHANUMERIC", false, (field) => validator.isAlphanumeric(field + "", 'en-US')),
             AFTER: new AdvancedRule("AFTER", false, 0, (field, value) => moment(field, "YYYY-MM-DD").isAfter(value)),
@@ -56,20 +57,9 @@ export default class RuleFactory {
         }
     }
 
-    /**
-     * Adds a new custom rule to the list
-     * @param name String rule name
-     * @param errorString String reason why the rule failed
-     * @param rule Object <? extends CustomRule>
-     */
-    static addRule(name, errorString, rule) {
-        if(rule instanceof CustomRule) {
-            //Add rule and error code
-            this.r[name.toUpperCase()] = rule;
-            ErrorCode.addErrorCode(name.toUpperCase(), errorString);
-        } else {
-            throw new Error("The rule must extends the superclass: CustomRule")
-        }
+
+    static isInit() {
+        return this.isInitialized;
     }
 
     /**
@@ -78,7 +68,21 @@ export default class RuleFactory {
      * @return Object
      */
     static rules() {
-      return this.r
+      return this.r;
+    }
+
+    /**
+     * Adds an additional rules to the rules object
+     * @param name String the name of the rule
+     * @param rule Rule object extending
+     */
+    static addRule(name, rule) {
+        if(rule instanceof CustomRule) {
+            console.log("Adding rule", rule.getName());
+            this.rules[name.toUpperCase()] = rule;
+        } else {
+            throw new Error("Rule does not implement required super class: CustomRule")
+        }
     }
 
     /**

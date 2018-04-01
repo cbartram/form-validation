@@ -44,6 +44,7 @@ describe('Parser Tests', () => {
         expect(parsedRules.name[0]).to.be.an("object").has.own.property("name").that.deep.equals("MAX");
         expect(parsedRules.address[0]).to.be.an("object").has.own.property("name").that.deep.equals("BETWEEN");
         expect(parsedRules.birthday[0]).to.be.an("object").has.own.property("name").that.deep.equals("AFTER");
+       // expect(parsedRules.friends[0]).to.be.an("object").has.own.property("name").that.deep.equals("BETWEEN");
         done();
     });
 });

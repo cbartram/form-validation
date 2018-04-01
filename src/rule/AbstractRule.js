@@ -75,6 +75,10 @@ export default class AbstractRule {
         return this.req === true;
     }
 
+    reason() {
+        throw new Error("This method requires implementation before use")
+    }
+
     /**
      * Overloaded method which adds a reason to the why array
      * @param name String name

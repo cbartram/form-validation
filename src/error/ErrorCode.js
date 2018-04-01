@@ -1,8 +1,8 @@
 
 
 export default class ErrorCode {
-    static init() {
-        this.error = {
+    static codes() {
+        return {
             ALPHANUMERIC:  ": must be alphanumeric.",
             AFTER: " was expected to be chronologically after ",
             AFTER_OR_EQUAL:  " was expected to be chronologically after or chronologically identical to ",
@@ -38,13 +38,5 @@ export default class ErrorCode {
             SAME: "must match the value for the field: ",
             STRING: " was expected to be of type String."
         }
-    }
-
-    static addErrorCode(name, error) {
-        this.error[name.toUpperCase()] = error;
-    }
-
-    static codes() {
-        return this.error
     }
 }
