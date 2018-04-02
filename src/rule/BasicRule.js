@@ -50,12 +50,12 @@ export default class BasicRule extends AbstractRule {
      * @param key
      * @param field
      */
-    addReason(name, key, field) {
+    addReason(key, field) {
         //Create a "Stack Trace/ValidationError" object
-        let error = new ValidationError(key, RuleFactory.getRule(name));
+        let error = new ValidationError(key, RuleFactory.getRule(this.name));
 
         //Set the error message
-        error.setWhy(field + ErrorCode.codes()[name.toUpperCase()]);
+        error.setWhy(field + ErrorCode.codes()[this.name.toUpperCase()]);
 
         //Update the encapsulated value
         super.setWhy(error.getError());

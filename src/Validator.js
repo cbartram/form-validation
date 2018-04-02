@@ -51,24 +51,39 @@ export default class Validator {
                         switch(rule.getName()) {
                             case "SAME":
                             case "DIFFERENT":
-                                if(rule.failed(body, rule.getValue(), req)) {
-                                    rule.addReason(rule.getName(), key, body, rule.getValue());
+                                if(typeof body === "undefined" || body === null) {
+                                    rule.addReason(key, body, rule.getValue());
                                     failedRules.push(rule);
+                                } else {
+                                    if (rule.failed(body, rule.getValue(), req)) {
+                                        rule.addReason(key, body, rule.getValue());
+                                        failedRules.push(rule);
+                                    }
                                 }
                                 break;
                             default:
-                                //Its just a normal advanced rule
-                                if (rule.failed(body, rule.getValue())) {
-                                    rule.addReason(rule.getName(), key, body, rule.getValue());
+                                if(typeof body === "undefined" || body === null) {
+                                    rule.addReason(key, body, rule.getValue());
                                     failedRules.push(rule);
+                                } else {
+                                    //Its just a normal advanced rule
+                                    if (rule.failed(body, rule.getValue())) {
+                                        rule.addReason(key, body, rule.getValue());
+                                        failedRules.push(rule);
+                                    }
                                 }
 
                         }
                     } else {
-                        //Basic Rule
-                        if(rule.failed(body)) {
-                            rule.addReason(rule.getName(), key, body);
+                        if(typeof body === "undefined" || body === null) {
+                            rule.addReason(key, body);
                             failedRules.push(rule);
+                        } else {
+                            //Basic Rule
+                            if (rule.failed(body)) {
+                                rule.addReason(key, body);
+                                failedRules.push(rule);
+                            }
                         }
                     }
                 });
