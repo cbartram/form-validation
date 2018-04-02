@@ -22,6 +22,7 @@ export default class BasicRule extends AbstractRule {
         super(name, req);
         this.req = req;
         this.activationFunction = activationFunction;
+        this.key = super.getKey();
     }
 
     /**
@@ -67,6 +68,15 @@ export default class BasicRule extends AbstractRule {
      */
     getType() {
         return "BASIC";
+    }
+
+    /**
+     * Returns the super class's key of the request object this
+     * rule is associated with
+     * @returns {null}
+     */
+    getKey() {
+        return super.getKey();
     }
 
     /**

@@ -26,6 +26,7 @@ export default class AdvancedRule extends AbstractRule {
         this.name = name;
         this.req = req;
         this.value = value;
+        this.key = super.getKey();
     }
 
     /**
@@ -114,6 +115,10 @@ export default class AdvancedRule extends AbstractRule {
      */
     getReq() {
         return super.getReq();
+    }
+
+    getKey() {
+        return super.getKey();
     }
 
     /**
