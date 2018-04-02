@@ -15,7 +15,7 @@ To get started using Validator simply install it as a dependency using `npm inst
 
 Validator will be provided to your project using a simple import statement
 
-`const Validator = require("form-validation/lib/Validator").default`
+`const Validator = require("node-form-validation/lib/Validator").default`
 
 ### Installing
 
@@ -37,7 +37,7 @@ and is designed to be quickly implemented into your NodeJS Backend!
 
 Lets take a quick look at a basic express example:
 ```javascript
-const Validator = require("node-form-validation");
+const Validator = require("node-form-validation/lib/Validator").default;
 
 const options = {
     name: 'required'
@@ -48,6 +48,8 @@ app.post('/your_form/submit', Validator.make(options), (req, res) => {
     //"vailid" and "failed"
     if(!req.valid) {
         res.json(req.failed);
+    } else {
+        res.json({success: true});
     }
 });
 ```
