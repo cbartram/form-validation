@@ -39,10 +39,6 @@ export default class ValidationError {
 
 
     getError() {
-        return {
-            name: this.rule.getName(),
-            key: this.key,
-            why: this.why
-        }
+        return this.why
     }
 }

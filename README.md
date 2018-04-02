@@ -69,12 +69,18 @@ An error object returned from the `req.failed` attempts to describe which rule
  failed and provide detailed information about the failure. The object will appear as follows:
 ```javascript
 {
-      "name": "BETWEEN",
-      "why": {
-         "name": "BETWEEN",
-         "key": "friends",
-         "why": "50 must be contained in the set 1,10"
-        }
+  "valid": false,
+  "failed": [
+    {
+      "req": true,
+      "name": "MAX", //The rules name
+      "why": "Christian Bartram : must not be greater than the specified value: 5",
+      "key": [
+        "name" //An array of HTTP POST body key's that this rule is being applied against
+      ],
+      "value": "5" //The value to compare the rule against
+    }
+  ]
 }
 ```
 
@@ -92,7 +98,7 @@ i.e Alphanumeric is a basic rule because it does not require more information ot
 Max is an advanced rule because it requires not only knowing to validate a value as being less than a maximum value but ALSO what that maximum value is.
 
 You can quickly combine combinations of Basic and Advanced rules to validate form data.
-Combinations can be chained together using the pipe `|` and properties for Advanced Rules are set using `:`
+Combinations can be chained together using the pipe `|` and values for Advanced Rules are set using `:`
 
 Lets take a look at an example to help clarify these concepts!
 ```javascript
@@ -107,17 +113,17 @@ Lets take a look at an example to help clarify these concepts!
 ```
 
 ```javascript
-const Validator = require("form-validation").default;
-
+const Validator = require("node-form-validation/lib/Validator").default;
 
 var options = {
-    name: 'required|alphanumeric'
+    name: 'required|alphanumeric' //Notice how we chain rules together with '|'
     surname: 'alphanumeric'
-    age: 'required|numeric|between:1,100',
+    age: 'required|numeric|between:1,100', //We can set the values for between using ':' and ','
     credit_card: 'required|credit_card|same:age',
     exp: 'required|date_after:2017-01-01'
 };
 
+//Add this as middleware to your route!
 Validator.make(options);
 
 ```
@@ -190,16 +196,18 @@ let opts = {
 { name:
    [ AdvancedRule {
        name: 'MAX',
-       why: [],
+       why: null,
        activationFunction: [Function],
        req: true,
-       value: '50' } ],
+       value: '50',
+       key: ['name'] } ]
   friends:
     [ BasicRule {
         name: "REQUIRED",
-        why: [],
+        why: null,
         activationFunction: [Function],
-        req: true
+        req: true,
+        key: ['friends']
       } ]
 }
 ```
@@ -214,7 +222,8 @@ can be run with the command quickly with the command `npm test`
 
 ## Deployment
 
-Deploy this software to NPM using `npm publish`
+Deploy this software to NPM using a pull request **after** forking and cloning
+the project. If the pull request is accepted it will be deployed to NPM on the next update!
 
 ## Built With
 
@@ -236,7 +245,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Christian Bartram** - *Initial Work* - [cbartram](https://github.com/cbartram)
+* **Christian Bartram** - *Lead Developer* - [cbartram](https://github.com/cbartram)
 
 ## License
 

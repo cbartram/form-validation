@@ -794,7 +794,7 @@ describe("Basic Rule Tests", () => {
 
     it('reason() returns an object impl of the failed rule', (done) => {
         rule.addReason("ALPHANUMERIC", "name", "abc++");
-        expect(rule.reason()).to.be.an("object").to.deep.equal({name: "ALPHANUMERIC", key: "ALPHANUMERIC", why: "name: must be alphanumeric." });
+        expect(rule.reason()).to.be.an("string").to.equal("name: must be alphanumeric.");
         done()
     });
 
@@ -846,7 +846,7 @@ describe("Advanced Rule Tests", () => {
 
     it('reason() Gets the reason for the failure', (done) => {
         rule.addReason("AFTER", "birthday", "2017-01-01", "2020-01-01");
-        expect(rule.reason()).to.be.an("object").to.deep.equal({key: "AFTER", name: "AFTER", why: "birthday was expected to be chronologically after 0"});
+        expect(rule.reason()).to.be.an("string").to.equal("birthday was expected to be chronologically after 0");
         done()
     });
 
@@ -951,9 +951,7 @@ describe("Validation Error Tests", () => {
     });
 
     it("getError() returns the object impl of the ValidationError", (done) => {
-        expect(error.getError().name).to.be.a("string").that.deep.equals("ALPHA");
-        expect(error.getError().why).to.be.a("string").that.deep.equals("Because it just is");
-        expect(error.getError().key).to.be.a("string").that.deep.equals("name");
+        expect(error.getError()).to.be.a("string").that.deep.equals("Because it just is");
         done();
     });
 });
