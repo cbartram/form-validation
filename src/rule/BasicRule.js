@@ -46,7 +46,6 @@ export default class BasicRule extends AbstractRule {
     /**
      * Adds an additional reason why this
      * rule failed to the stack
-     * @param name
      * @param key
      * @param field
      */
@@ -73,7 +72,7 @@ export default class BasicRule extends AbstractRule {
     /**
      * Returns the super class's key of the request object this
      * rule is associated with
-     * @returns {null}
+     * @returns {Array}
      */
     getKey() {
         return super.getKey();

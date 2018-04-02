@@ -116,6 +116,11 @@ export default class AdvancedRule extends AbstractRule {
         return super.getReq();
     }
 
+    /**
+     * Returns the Array of http request keys this rule
+     * applies to
+     * @returns {Array}
+     */
     getKey() {
         return super.getKey();
     }

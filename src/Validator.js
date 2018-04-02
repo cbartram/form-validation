@@ -29,9 +29,6 @@ export default class Validator {
      */
     static make(data) {
         return function initialize(req, res, next) {
-            //Init rules
-            RuleFactory.init();
-
             //Add 2 variables to the request
             req.valid = false;
             req.why = "";

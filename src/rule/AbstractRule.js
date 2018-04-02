@@ -73,7 +73,7 @@ export default class AbstractRule {
 
     /**
      * Returns the key of the request object this rule is associated with
-     * @returns {null}
+     * @returns {Array}
      */
     getKey() {
         return this.key;

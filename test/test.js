@@ -20,6 +20,7 @@ describe('Parser Tests', () => {
         friends: "between:1,10"
     };
 
+
     let parsedRules = Parser.parse(input);
 
     it("Correctly parses object with correct properties", (done) => {
@@ -40,7 +41,7 @@ describe('Parser Tests', () => {
         done();
     });
 
-    it("Each rule is set properly", (done) => {
+    it("Ensures that each rule is set properly", (done) => {
         expect(parsedRules.name[0]).to.be.an("object").has.own.property("name").that.deep.equals("MAX");
         expect(parsedRules.address[0]).to.be.an("object").has.own.property("name").that.deep.equals("BETWEEN");
         expect(parsedRules.birthday[0]).to.be.an("object").has.own.property("name").that.deep.equals("AFTER");
@@ -546,7 +547,7 @@ describe('Rules Tests', () => {
             .set('Content-Type', 'application/json')
             .set('accept', 'json')
             .send({name: null})
-            .expect(200, {success: true, validRequest: true, why: ""}, done)
+            .expect(200, {success: true, validRequest: false, why: ""}, done)
     });
 
     it('Validates Numeric Rule', (done) => {
@@ -793,7 +794,7 @@ describe("Basic Rule Tests", () => {
 
     it('reason() returns an object impl of the failed rule', (done) => {
         rule.addReason("ALPHANUMERIC", "name", "abc++");
-        expect(rule.reason()).to.be.an("object").to.deep.equal({name: "ALPHANUMERIC", key: "name", why: "abc++: must be alphanumeric." });
+        expect(rule.reason()).to.be.an("object").to.deep.equal({name: "ALPHANUMERIC", key: "ALPHANUMERIC", why: "name: must be alphanumeric." });
         done()
     });
 
@@ -845,7 +846,7 @@ describe("Advanced Rule Tests", () => {
 
     it('reason() Gets the reason for the failure', (done) => {
         rule.addReason("AFTER", "birthday", "2017-01-01", "2020-01-01");
-        expect(rule.reason()).to.be.an("object").to.deep.equal({key: "birthday", name: "AFTER", why: "2017-01-01 was expected to be chronologically after 2020-01-01"});
+        expect(rule.reason()).to.be.an("object").to.deep.equal({key: "AFTER", name: "AFTER", why: "birthday was expected to be chronologically after 0"});
         done()
     });
 
