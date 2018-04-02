@@ -1,8 +1,6 @@
 /**
  * Created by christianbartram on 2/6/18.
  */
-const RuleFactory = require("./rule/RuleFactory").default;
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const Validator = require('./Validator').default;
@@ -23,14 +21,14 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => res.sendFile("/public/index.html", {root: __dirname}));
 
 let opts = {
-    name:"max:50",
-    address: "between:1,10",
-    birthday:"after:1994-01-01",
+    name:"max:5",
+    address: "required|between:1,10",
+    birthday:"required|after:1994-01-01",
     friends: "between:1,10"
 };
 
 app.post('/api/v1/form/submit', Validator.make(opts), (req, res) => {
-    res.json({success: true, valid: req.valid, failed: req.failed});
+    res.json({valid: req.valid, failed: req.failed});
 });
 
 app.listen(3000, () => {

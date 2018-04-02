@@ -1,7 +1,7 @@
+lib/
+node_modules/
+build/
 .idea
 .DS_STORE
-node_modules
-build
 .env
-package-lock.json
 .eslintrc

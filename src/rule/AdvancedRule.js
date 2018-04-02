@@ -26,6 +26,7 @@ export default class AdvancedRule extends AbstractRule {
         this.name = name;
         this.req = req;
         this.value = value;
+        this.key = super.getKey();
     }
 
     /**
@@ -55,17 +56,16 @@ export default class AdvancedRule extends AbstractRule {
     /**
      * Adds an additional reason why this
      * rule failed to the stack
-     * @param name
      * @param key
      * @param field
      * @param value
      */
-    addReason(name, key, field, value) {
+    addReason(key, field) {
         //Create a "Stack Trace/ValidationError" object
-        let error = new ValidationError(key, RuleFactory.getRule(name));
+        let error = new ValidationError(key, RuleFactory.getRule(this.name));
 
         //Set the error message
-        error.setWhy(field + ErrorCode.codes()[name.toUpperCase()] + value);
+        error.setWhy(field + ErrorCode.codes()[this.name.toUpperCase()] + this.value);
 
         //Update the encapsulated value
         super.setWhy(error.getError());
@@ -114,6 +114,15 @@ export default class AdvancedRule extends AbstractRule {
      */
     getReq() {
         return super.getReq();
+    }
+
+    /**
+     * Returns the Array of http request keys this rule
+     * applies to
+     * @returns {Array}
+     */
+    getKey() {
+        return super.getKey();
     }
 
     /**

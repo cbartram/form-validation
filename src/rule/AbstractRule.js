@@ -9,7 +9,8 @@ export default class AbstractRule {
     constructor(name, req) {
         this.req = req;
         this.name = name;
-        this.why = null;
+        this.why = [];
+        this.key = []; //The key in the request object this rule is associated with
     }
 
     /**
@@ -51,7 +52,8 @@ export default class AbstractRule {
 
     /**
      * Returns true if the rule is required
-     * @param req boolean
+     * @param req Boolean
+     * @returns Boolean
      */
     setReq(req) {
         if(typeof req === "boolean") {
@@ -63,9 +65,18 @@ export default class AbstractRule {
 
     /**
      * Returns the required property
+     * @returns Boolean
      */
     getReq() {
         return this.req;
+    }
+
+    /**
+     * Returns the key of the request object this rule is associated with
+     * @returns {Array}
+     */
+    getKey() {
+        return this.key;
     }
 
     /**

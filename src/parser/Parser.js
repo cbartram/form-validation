@@ -12,27 +12,27 @@ export default class Parser {
 
     /**
      * Parses string data for each field into usable javascript object
-     * @param data
-     * @param body
-     * @returns {{}}
+     * @param data Request body as JSON
+     * @returns {Object}
      */
     static parse(data) {
+        //Get rules definitions from rules class
+        let rules = Rules.rules();
+        let shouldBail = false;
         let obj = {};
 
         for(let key in data) {
-            //ex obj[name] = [Arr, to, hold, all, the, rules, objects]
-            obj[key] = [];
-
-
-            //Get rules definitions from rules class
-            let rules = Rules.rules();
-            let shouldBail = false;
+            //ex obj[MAX] = [AdvancedRule(), BasicRule(), BasicRule(), AdvancedRule()]
+            if(data.hasOwnProperty(key)) {
+                obj[key] = [];
+            }
 
             if(data.hasOwnProperty(key)) {
                 let arr = data[key].split("|");
 
+                //arr => ['max:50', 'after:1994-01-01', 'required']
                 arr.forEach(element => {
-                    element.toUpperCase() === "BAIL" ? shouldBail = true : false;
+                    element.toUpperCase() === "BAIL" ? shouldBail = true : null;
 
                     //If the element includes a value instead of a boolean
                     if(element.includes(":")) {
@@ -45,32 +45,31 @@ export default class Parser {
                         //Parse between, includes, and not_in differently
                         if(element === "between" || element === "includes" || element === "not_in") {
                             let arr = value.split(",");
-
                                  rules[element.toUpperCase()].req = true;
                                  rules[element.toUpperCase()].value = arr;
-                                 rules[element.toUpperCase()].why = [];
+                                 rules[element.toUpperCase()].key.push(key);
 
                         } else {
-
                                 rules[element.toUpperCase()].req = true;
                                 rules[element.toUpperCase()].value = value;
-                                rules[element.toUpperCase()].why = [];
-
+                                rules[element.toUpperCase()].key.push(key);
                         }
-
                     } else {
                             rules[element.toUpperCase()].req = true;
-                            rules[element.toUpperCase()].why = [];
+                            rules[element.toUpperCase()].key.push(key);
                     }
                 });
             }
+        }
 
-            //For each of the parsed rules
-            for(let parsed in rules) {
-                if(rules[parsed].req) {
+        //For each of the parsed rules
+        for(let parsed in rules) {
+            if(rules[parsed].req) {
+                //Find out which key in obj this rule applies to
+                rules[parsed].getKey().forEach(key => {
                     //Push the parsed rule onto the objects arr at the key position
-                    obj[key].push(rules[parsed])
-                }
+                    obj[key].push(rules[parsed]);
+                });
             }
         }
 
