@@ -9,7 +9,7 @@ import ErrorCode from "../error/ErrorCode";
  * @author Christian Bartram
  */
 export default class CustomRule extends AbstractRule {
-    constructor(name = "CustomRule", required = false, activationFunction, errorMessage = "") {
+    constructor(name = "CustomRule", required = false, activationFunction) {
         super(name, required);
         this.activationFunction = activationFunction;
     }

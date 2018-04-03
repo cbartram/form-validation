@@ -28,7 +28,7 @@ let opts = {
     name:"max:20",
     address: "required|between:1,10",
     birthday:"required|after:1994-01-01",
-    friends: "timezone:America/NewYork|between:1,10",
+    friends: "timezone:America/New_York|between:1,10",
 };
 
 
