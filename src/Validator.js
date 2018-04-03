@@ -5,6 +5,7 @@
  */
 import Parser from './parser/Parser';
 import RuleFactory from "./rule/RuleFactory";
+import ErrorCode from './error/ErrorCode';
 
 /**
  * Validator
@@ -16,9 +17,10 @@ import RuleFactory from "./rule/RuleFactory";
  */
 export default class Validator {
     static addCustomRule(rule) {
-        //Init the Rules
         RuleFactory.init();
-        RuleFactory.addRule(rule.getName(), rule);
+        ErrorCode.init();
+        ErrorCode.addErrorCode(rule.getName(), rule.getErrorMessage());
+        RuleFactory.addRule(rule);
     }
 
     /**
@@ -29,12 +31,18 @@ export default class Validator {
      */
     static make(data) {
         return function initialize(req, res, next) {
+            if(!RuleFactory.isInit() || !ErrorCode.isInit()) {
+                RuleFactory.init();
+                ErrorCode.init();
+            }
+
             //Add 2 variables to the request
             req.valid = false;
             req.why = "";
 
             let parsedRules = Parser.parse(data);
             let failedRules = [];
+
 
             //Validate the data
             for(let key in parsedRules) {
@@ -43,7 +51,7 @@ export default class Validator {
 
                 rules.forEach(rule => {
                     //Check each rule against the value given in the HTTP Request body
-                    if(rule.getType() === "ADVANCED") {
+                    if(rule.getType().toUpperCase() === "ADVANCED") {
                         //Some rules require an HTTP request object to be validated
                         switch(rule.getName()) {
                             case "SAME":

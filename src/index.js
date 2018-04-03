@@ -1,9 +1,11 @@
 /**
  * Created by christianbartram on 2/6/18.
  */
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const Validator = require('./Validator').default;
+const Timezone = require('./Timezone').default;
 const chalk = require('chalk');
 const app = express();
 
@@ -20,12 +22,15 @@ app.use((req, res, next) => {
 //Serve HTML file
 app.get('/', (req, res) => res.sendFile("/public/index.html", {root: __dirname}));
 
+Validator.addCustomRule(new Timezone("timezone", (field, value) => value === "America/New_York", "is not a valid timezone"));
+
 let opts = {
-    name:"max:5",
+    name:"max:20",
     address: "required|between:1,10",
     birthday:"required|after:1994-01-01",
-    friends: "between:1,10"
+    friends: "timezone:America/NewYork|between:1,10",
 };
+
 
 app.post('/api/v1/form/submit', Validator.make(opts), (req, res) => {
     res.json({valid: req.valid, failed: req.failed});

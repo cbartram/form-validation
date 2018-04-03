@@ -1,8 +1,12 @@
 
 
 export default class ErrorCode {
-    static codes() {
-        return {
+
+    /**
+     * Initializes the error codes
+     */
+    static init() {
+        this.c = {
             ALPHANUMERIC:  ": must be alphanumeric.",
             AFTER: " was expected to be chronologically after ",
             AFTER_OR_EQUAL:  " was expected to be chronologically after or chronologically identical to ",
@@ -38,5 +42,34 @@ export default class ErrorCode {
             SAME: "must match the value for the field: ",
             STRING: " was expected to be of type String."
         }
+    }
+
+    /**
+     * Returns true if the error codes are initializes and false otherwise
+     * @returns {boolean}
+     */
+    static isInit() {
+        try {
+            return Object.keys(this.c).length >= 34;
+        } catch(e) {
+            return false;
+        }
+    }
+
+    /**
+     * Adds an additional error code to the stack
+     * @param name
+     * @param message
+     */
+    static addErrorCode(name, message) {
+        this.c[name.toUpperCase()] = message;
+    }
+
+    /**
+     * Returns the error codes object
+     * @returns {Object}
+     */
+    static codes() {
+        return this.c;
     }
 }
