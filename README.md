@@ -148,6 +148,7 @@ list of all the validation rules.
 | After           | Advanced Rule | Requires that the date comes chronologically after the value                                                                                                  | `{"birthday": "after:2017-01-01"}`                                                                        |
 | After or Equal  | Advanced Rule | Requires that the data comes chronologically after or equal to the value                                                                                      | `{"birthday": "after_or_equal:2017-01-01"}`                                                               |
 | Array           | Basic Rule    | Requires that the field being validated is of type Array                                                                                                      | `{"friends": "array"}`                                                                                    |
+| Array_Size      | Advanced Rule | Requires that the field being validated has a length equal to the specified value                                                                             | `{"friends": "array_size:3"}`                                                                             |
 | Alpha           | Basic Rule    | Requires that the field being validated is alpha characters only (a-z, A-Z)                                                                                   | `{"birthday": "alpha"}`                                                                                   |
 | Boolean         | Basic Rule    | Requires the field to be of type boolean                                                                                                                      | `{"birthday": "boolean"}`                                                                                 |
 | Before          | Advanced Rule | Requires the date to come chronologically before the value                                                                                                    | `{"birthday": "before:2017-01-01"}`                                                                       |
@@ -178,6 +179,85 @@ list of all the validation rules.
 | Size            | Advanced Rule | The field under validation must match the given size.                                                                                                         | `{name: "size:20"}`                                                                                       |
 | Same            | Advanced Rule | The field under validation's value must match the value of the fields name given as an argument to this rule. See the example for more information            | `{ name: "required", surname: "same:name"} //The surname must be the same as name in the Request`         |
 | String          | Basic Rule    | The field under validation must be of type String                                                                                                             | `{name: "string"}`                                                                                        |
+
+## Custom Rules <span class="label label-warning">BETA</span>
+
+If none of the above rules suit your use case we still have an option for you! Custom rules allow you to
+define and implement the logic behind your own rules however, there are a couple requirements to do this.
+
+- You must have support for ES6 Class syntax in your Node/Express Server
+- Thats it!
+
+What we will be doing is extending a custom rule template which gives your rule the ability to integrate
+with the existing form-validation middleware. Lets get started!
+
+We are going to be building a rule that validates a single timezone. The first thing we need to do is create
+out class template!
+```javascript
+import CustomRule from 'node-form-validation/lib/rule/CustomRule';
+
+export default class Timezone extends CustomRule {
+    constructor(name, activationFunction, errorMessage, value) {
+            super(name, activationFunction, errorMessage, value = null); //This value is parsed from your input
+            this.name = name;
+            this.errorMessage = errorMessage;
+            this.activationFunction = activationFunction;
+            this.value = value;
+    }
+
+    //The following methods are used by the internal validator
+
+    getName() {
+       return this.name
+    }
+
+    getValue() {
+        return this.value;
+    }
+
+    getErrorMessage() {
+        return this.errorMessage;
+    }
+
+    //Return the rule type (either BASIC or ADVANCED)
+    getType() {
+        return "ADVANCED"
+    }
+}
+```
+This class initializes some values and provides accessor methods so that
+the fields can be easily retrieved!
+
+Next we will instantiate our custom rule and pass it off to the validator
+
+```javascript
+const Validator = require("node-form-validation/lib/Validator").default;
+const Timezone = require("./Timezone");
+
+
+//Add our rule!
+Validator.addCustomRule(new Timezone("timezone", (field, value) => {
+    //Here we define our Activation Function
+    //Field is our form's key -> date and value is its value -> America/New_York
+    //(this function determines if the form input is valid or not)
+
+    return value === "America/New_York";
+
+}, " is not a valid timezone!"))
+
+const options = {
+    name: 'required',
+    date: 'date_after:2017-01-01|timezone:America/New_York' //Notice the timezone here!
+}
+
+app.post('/your_form/submit', Validator.make(options), (req, res) => {
+    res.json({success: req.failed});
+});
+```
+
+That's it! It might feel like a lot of code to add your own rule but its actually clean
+and repeatable. Hopefully you will find you dont need to add additional rules but on the off chance
+that you do this is how its done!
 
 ## Under The Hood
 

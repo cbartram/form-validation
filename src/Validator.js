@@ -5,6 +5,7 @@
  */
 import Parser from './parser/Parser';
 import RuleFactory from "./rule/RuleFactory";
+import ErrorCode from './error/ErrorCode';
 
 /**
  * Validator
@@ -16,9 +17,10 @@ import RuleFactory from "./rule/RuleFactory";
  */
 export default class Validator {
     static addCustomRule(rule) {
-        //Init the Rules
         RuleFactory.init();
-        RuleFactory.addRule(rule.getName(), rule);
+        ErrorCode.init();
+        ErrorCode.addErrorCode(rule.getName(), rule.getErrorMessage());
+        RuleFactory.addRule(rule);
     }
 
     /**
@@ -29,11 +31,16 @@ export default class Validator {
      */
     static make(data) {
         return function initialize(req, res, next) {
+            if(!RuleFactory.isInit() || !ErrorCode.isInit()) {
+                RuleFactory.init();
+                ErrorCode.init();
+            }
+
             //Add 2 variables to the request
             req.valid = false;
             req.why = "";
 
-            let parsedRules = Parser.parse(data);
+            let parsedRules =  new Parser().parse(data);
             let failedRules = [];
 
             //Validate the data
@@ -42,39 +49,27 @@ export default class Validator {
                 let rules = parsedRules[key]; //Array of Rules to enforce
 
                 rules.forEach(rule => {
-                    //Check each rule against the value given in the HTTP Request body
-                    if(rule.getType() === "ADVANCED") {
-                        //Some rules require an HTTP request object to be validated
-                        switch(rule.getName()) {
-                            case "SAME":
-                            case "DIFFERENT":
-                                if(typeof body === "undefined" || body === null) {
-                                    rule.addReason(key, body, rule.getValue());
-                                    failedRules.push(rule);
-                                } else {
+                    if(typeof body !== 'undefined' && body !== null) {
+
+                        //Check each rule against the value given in the HTTP Request body
+                        if (rule.getType().toUpperCase() === "ADVANCED") {
+                            //Some rules require an HTTP request object to be validated
+                            switch (rule.getName()) {
+                                case "SAME":
+                                case "DIFFERENT":
                                     if (rule.failed(body, rule.getValue(), req)) {
                                         rule.addReason(key, body, rule.getValue());
                                         failedRules.push(rule);
                                     }
-                                }
-                                break;
-                            default:
-                                if(typeof body === "undefined" || body === null) {
-                                    rule.addReason(key, body, rule.getValue());
-                                    failedRules.push(rule);
-                                } else {
+                                    break;
+                                default:
                                     //Its just a normal advanced rule
                                     if (rule.failed(body, rule.getValue())) {
                                         rule.addReason(key, body, rule.getValue());
                                         failedRules.push(rule);
                                     }
-                                }
 
-                        }
-                    } else {
-                        if(typeof body === "undefined" || body === null) {
-                            rule.addReason(key, body);
-                            failedRules.push(rule);
+                            }
                         } else {
                             //Basic Rule
                             if (rule.failed(body)) {
@@ -84,6 +79,7 @@ export default class Validator {
                         }
                     }
                 });
+
             }
 
             //Evaluate list of errors

@@ -15,7 +15,7 @@ export default class Parser {
      * @param data Request body as JSON
      * @returns {Object}
      */
-    static parse(data) {
+     parse(data) {
         //Get rules definitions from rules class
         let rules = Rules.rules();
         let shouldBail = false;
@@ -32,6 +32,7 @@ export default class Parser {
 
                 //arr => ['max:50', 'after:1994-01-01', 'required']
                 arr.forEach(element => {
+
                     element.toUpperCase() === "BAIL" ? shouldBail = true : null;
 
                     //If the element includes a value instead of a boolean
@@ -40,7 +41,6 @@ export default class Parser {
                         //example: element:value -> max:50
                         let value = element.substr(element.indexOf(":") + 1, element.length);
                         element = element.substr(0, element.indexOf(":"));
-
 
                         //Parse between, includes, and not_in differently
                         if(element === "between" || element === "includes" || element === "not_in") {
@@ -65,14 +65,15 @@ export default class Parser {
         //For each of the parsed rules
         for(let parsed in rules) {
             if(rules[parsed].req) {
+
                 //Find out which key in obj this rule applies to
                 rules[parsed].getKey().forEach(key => {
+                    obj[key] = [];
                     //Push the parsed rule onto the objects arr at the key position
                     obj[key].push(rules[parsed]);
                 });
             }
         }
-
         return obj;
     }
 };
