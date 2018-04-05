@@ -7,18 +7,19 @@ export default class ErrorCode {
      */
     static init() {
         this.c = {
-            ALPHANUMERIC:  ": must be alphanumeric.",
+            ALPHANUMERIC:  " : must be alphanumeric.",
             AFTER: " was expected to be chronologically after ",
             AFTER_OR_EQUAL:  " was expected to be chronologically after or chronologically identical to ",
-            ARRAY:  ": must be an array",
+            ARRAY:  " : must be an array",
+            ARRAY_SIZE: " array must be of length: ",
             ALPHA:  " must be an alpha value [A-Z][a-z]",
-            BOOLEAN: ": must be of type boolean.",
-            BEFORE: "was expected to be chronologically before",
+            BOOLEAN: " : must be of type boolean.",
+            BEFORE: " was expected to be chronologically before",
             BEFORE_OR_EQUAL:" must be chronologically before or chronologically equal to ",
             BETWEEN:  " must be contained in the set ",
             CREDIT_CARD: " must be a valid credit card.",
-            DATE: ": must be a valid Javascript Date.",
-            DATE_EQUALS:  "was expected to be chronologically equal to ",
+            DATE: " : must be a valid Javascript Date.",
+            DATE_EQUALS:  " was expected to be chronologically equal to ",
             DATE_FORMAT:  " was expected to be in a moment JS compatible date.",
             DIFFERENT: " was expected to be a different value from ",
             DIGITS:" was expected to be numeric and of the length -> ",
@@ -34,12 +35,12 @@ export default class ErrorCode {
             MAX: " : must not be greater than the specified value: ",
             MIN: " The key exceeds the minimum length -> ",
             NULLABLE: "",
-            NUMERIC: ": must be numerical.",
+            NUMERIC: " : must be numerical.",
             NOT_IN: " the specified value must NOT be in the set",
-            REQUIRED: ": must not be undefined",
+            REQUIRED: " : must not be undefined",
             REGEX:  " does not match the given regular expression. ",
-            SIZE: ` was expected to be of size: `,
-            SAME: "must match the value for the field: ",
+            SIZE: " was expected to be of size: ",
+            SAME: " must match the value for the field: ",
             STRING: " was expected to be of type String."
         }
     }
